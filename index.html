@@ -84,7 +84,7 @@ button,select,input{background:#000;color:var(--text);border:1px solid var(--bor
 
 
 :root{ --hu-color:#00ff00; --hu-shadow:0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00; --en-shadow:0 0 5px #ffffff; }
-.en-header{ color:#ffffff !important; text-shadow:var(--en-shadow) !important; font-weight:bold; }
+.en-header{ color:#ffffff !important; text-shadow:var(--en-shadow) !important; } .en-header-old{ color:#ffffff !important; text-shadow:var(--en-shadow) !important; font-weight:bold; }
 .hu-header{ color:var(--hu-color) !important; text-shadow:var(--hu-shadow) !important; font-weight:bold; }
 .en-text{ color:#ffffff !important; }
 .hu-text{ color:var(--hu-color) !important; text-shadow:var(--hu-shadow) !important; font-weight:bold; }
@@ -92,6 +92,12 @@ button,select,input{background:#000;color:var(--text);border:1px solid var(--bor
 .token-key{ color:#7ec8ff !important; }
 .token-comment{ color:#888888 !important; font-style:italic; }
 body.no-neon-active .hu-header, body.no-neon-active .hu-text, body.no-neon-active .en-header { text-shadow:none !important; }
+
+
+.en-header{ color:#ffffff !important; text-shadow:0 0 5px #ffffff !important; }
+.hu-header{ color:var(--hu-color) !important; text-shadow:var(--hu-shadow) !important; }
+.hu-text{ color:var(--hu-color) !important; text-shadow:var(--hu-shadow) !important; }
+.en-text{ color:#ffffff !important; }
 
 </style>
 </head>
@@ -1220,6 +1226,31 @@ document.addEventListener('DOMContentLoaded', ()=>{
       if(typeof applyHighlight==='function') applyHighlight();
     }, 400);
   });
+})();
+</script>
+
+
+<script>
+(function(){
+  // GitHub fix: after any save, force re-apply highlight with current switch color
+  function forceHuColorAfterSave(){
+    setTimeout(()=>{
+      const sel = document.getElementById('neon-color-select');
+      const hex = sel?.value || '#ffff00';
+      document.documentElement.style.setProperty('--hu-color', hex);
+      const isOff = document.getElementById('neon-id')?.classList.contains('no-neon');
+      const shadow = isOff ? 'none' : `0 0 5px ${hex}, 0 0 10px ${hex}, 0 0 15px ${hex}`;
+      document.documentElement.style.setProperty('--hu-shadow', shadow);
+      if(typeof applyHighlight==='function') applyHighlight();
+    }, 100);
+  }
+  // Hook into precise save toast and ocr insert
+  const origShowToast = window.showSaveToast;
+  window.showSaveToast = function(msg){
+    if(origShowToast) origShowToast(msg);
+    forceHuColorAfterSave();
+  };
+  window.addEventListener('storage', forceHuColorAfterSave);
 })();
 </script>
 
