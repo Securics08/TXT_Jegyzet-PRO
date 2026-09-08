@@ -279,84 +279,67 @@ function applyHighlight() {
     let raw = editor.value;
     let html = raw.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-    let huColor = '#ffff00';
+    let huColor = '#00ff00';
     try{
         const sel = document.getElementById('neon-color-select');
-        huColor = sel?.value || localStorage.getItem('securics_final_color') || localStorage.getItem('securics_neon_color') || '#ffff00';
-    }catch(e){ huColor = '#ffff00'; }
+        huColor = sel?.value || localStorage.getItem('securics_final_color') || '#00ff00';
+    }catch(e){}
     const isNoNeon = document.body.classList.contains('no-neon-active') || document.getElementById('neon-id')?.classList.contains('no-neon');
-    const huShadow = isNoNeon ? 'none' : `0 0 5px ${huColor}, 0 0 10px ${huColor}, 0 0 15px ${huColor}`;
-    const huShadowStyle = isNoNeon ? '' : `text-shadow:${huShadow};`;
-    const enColor = '#ffffff';
-    const enShadow = '0 0 5px #ffffff';
+    const huShadow = isNoNeon ? 'none' : `0 0 5px ${huColor}, 0 0 10px ${huColor}, 0 0 15px ${huColor}, 0 0 20px ${huColor}`;
+    const huStyle = `color:${huColor} !important; ${isNoNeon ? '' : 'text-shadow:'+huShadow+' !important;'} font-weight:bold;`;
 
-    if (true) { // mindkét módban színezzük
-        // 1. Védjük az EN/HU fejléceket
-        html = html.replace(/--- \[(EN|HU)[^\]]*\] ---/g, function(m){
-            const isHU = m.toUpperCase().includes('HU');
-            if(isHU){
-                return `__HU_HEADER__${m}__END__`;
-            } else {
-                return `__EN_HEADER__${m}__END__`;
-            }
-        });
-        html = html.replace(/\[(HU FORD[^\]]*|HU MAGENTA|HU ZÖLD|HU)\]/gi, function(m){
-            return `__HU_HEADER__${m}__END__`;
-        });
-        html = html.replace(/\[(OCR[^\]]*|OCR TISZTA|OCR EREDETI[^\]]*)\]/gi, function(m){
-            return `__EN_HEADER__${m}__END__`;
-        });
+    // 1. Protect all --- [XX ...] --- headers
+    let blocks = [];
+    html = html.replace(/--- \[(EN|HU)[^\]]*\] ---/g, function(m){
+        blocks.push(m);
+        return `__HDR_${blocks.length-1}__`;
+    });
 
-        // 2. INI színezés csak zenburn módban
-        if(document.body.classList.contains("zenburn-mode")){
-            html = html.replace(/(__HU_HEADER__.*?__END__|__EN_HEADER__.*?__END__)/g, function(m){
-                return `__PROTECT_${btoa(m).replace(/=/g,'')}__`;
-            });
-            html = html.replace(/(\[.*?\])/g, '<span class="token-section">$1</span>');
-            html = html.replace(/^([\w\s]+=)/gm, '<span class="token-key">$1</span>');
-            html = html.replace(/(;.*$)/gm, '<span class="token-comment">$1</span>');
-            // restore protect
-            html = html.replace(/__PROTECT_(.*?)__/g, function(_, b64){
-                try{ return atob(b64); }catch(e){ return _; }
-            });
-        }
-
-        // 3. EN/HU fejlécek INLINE STYLE-al - GitHub cache-proof!
-        html = html.replace(/__EN_HEADER__(.*?)__END__/g, function(_, inner){
-            return `<span style="color:${enColor} !important; text-shadow:${enShadow} !important; font-weight:bold;">${inner}</span>`;
-        });
-        html = html.replace(/__HU_HEADER__(.*?)__END__/g, function(_, inner){
-            return `<span style="color:${huColor} !important; ${huShadowStyle} font-weight:bold;">${inner}</span>`;
-        });
-
-        // 4. Tartalom színezés
-        let parts = html.split(/(<span style="color:[^>]+>--- \[(?:EN|HU)[^\]]*\] ---<\/span>|<span style="color:[^>]+>\[(?:HU|OCR)[^\]]*\]<\/span>)/);
-        let result = '';
-        let mode = null;
-        for(let i=0;i<parts.length;i++){
-            let p = parts[i];
-            if(p.includes('--- [EN') || p.includes('[OCR')){
-                mode = 'EN';
-                result += p;
-            } else if(p.includes('--- [HU') || p.includes('[HU')){
-                mode = 'HU';
-                result += p;
-            } else {
-                if(mode === 'HU' && p.trim()){
-                    if(p.includes('token-section') || p.includes('--- [')){
-                        result += p;
-                    } else {
-                        result += `<span style="color:${huColor} !important; ${huShadowStyle} font-weight:bold;">${p}</span>`;
-                    }
-                } else if(mode === 'EN' && p.trim()){
-                    result += `<span style="color:${enColor} !important; text-shadow:${enShadow} !important;">${p}</span>`;
-                } else {
-                    result += p;
-                }
-            }
-        }
-        html = result;
+    // 2. INI coloring if zenburn
+    if(document.body.classList.contains("zenburn-mode")){
+        html = html.replace(/(\[.*?\])/g, '<span class="token-section">$1</span>');
+        html = html.replace(/^([\w\s]+=)/gm, '<span class="token-key">$1</span>');
+        html = html.replace(/(;.*$)/gm, '<span class="token-comment">$1</span>');
     }
+
+    // 3. Restore headers as white + colorize following text
+    // We will reconstruct by splitting on HDR tokens and coloring content after
+    let parts = html.split(/__HDR_(\d+)__/);
+    let result = '';
+    let currentMode = null; // EN or HU
+    for(let i=0;i<parts.length;i++){
+        if(i % 2 === 0){
+            // text content
+            let p = parts[i];
+            if(currentMode === 'HU' && p.trim()){
+                // ONLY TEXT colored
+                // Don't color if it's just whitespace or contains token-section (INI)
+                if(p.includes('token-section') || p.includes('token-key')){
+                    result += p;
+                } else {
+                    result += `<span style="${huStyle}">${p}</span>`;
+                }
+            } else if(currentMode === 'EN' && p.trim()){
+                result += `<span style="color:#ffffff !important; text-shadow:0 0 5px #ffffff !important;">${p}</span>`;
+            } else {
+                result += p;
+            }
+        } else {
+            // header index
+            let idx = parseInt(parts[i]);
+            let hdr = blocks[idx];
+            let isHU = hdr.toUpperCase().includes('HU');
+            currentMode = isHU ? 'HU' : 'EN';
+            // Header itself stays WHITE (with cyan date) - NOT colored by switch
+            let hdrHtml = hdr.replace(/\[HU[^\]]*\]/g, function(mm){
+                return `<span style="color:#7ec8ff !important; font-weight:bold;">${mm}</span>`;
+            }).replace(/\[EN[^\]]*\]/g, function(mm){
+                return `<span style="color:#7ec8ff !important; font-weight:bold;">${mm}</span>`;
+            });
+            result += `<span style="color:#ffffff !important; font-weight:bold;">${hdrHtml}</span>`;
+        }
+    }
+    html = result;
 
     highlight.innerHTML = html + (editor.value.endsWith('\n') ? ' ' : '');
     try{
