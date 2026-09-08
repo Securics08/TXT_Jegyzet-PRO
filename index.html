@@ -84,7 +84,7 @@ button,select,input{background:#000;color:var(--text);border:1px solid var(--bor
 
 
 :root{ --hu-color:#00ff00; --hu-shadow:0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00; --en-shadow:0 0 5px #ffffff; }
-.en-header{ color:#ffffff !important; text-shadow:var(--en-shadow) !important; } .en-header-old{ color:#ffffff !important; text-shadow:var(--en-shadow) !important; font-weight:bold; }
+.en-header{ color:#ffffff !important; text-shadow:var(--en-shadow) !important; font-weight:bold; }
 .hu-header{ color:var(--hu-color) !important; text-shadow:var(--hu-shadow) !important; font-weight:bold; }
 .en-text{ color:#ffffff !important; }
 .hu-text{ color:var(--hu-color) !important; text-shadow:var(--hu-shadow) !important; font-weight:bold; }
@@ -92,12 +92,6 @@ button,select,input{background:#000;color:var(--text);border:1px solid var(--bor
 .token-key{ color:#7ec8ff !important; }
 .token-comment{ color:#888888 !important; font-style:italic; }
 body.no-neon-active .hu-header, body.no-neon-active .hu-text, body.no-neon-active .en-header { text-shadow:none !important; }
-
-
-.en-header{ color:#ffffff !important; text-shadow:0 0 5px #ffffff !important; }
-.hu-header{ color:var(--hu-color) !important; text-shadow:var(--hu-shadow) !important; }
-.hu-text{ color:var(--hu-color) !important; text-shadow:var(--hu-shadow) !important; }
-.en-text{ color:#ffffff !important; }
 
 </style>
 </head>
@@ -285,110 +279,89 @@ function applyHighlight() {
     let raw = editor.value;
     let html = raw.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-    // Dinamikus HU szín olvasása
-    let huColor = '#00ff00';
+    let huColor = '#ffff00';
     try{
-        huColor = localStorage.getItem('securics_final_color') || localStorage.getItem('securics_neon_color') || document.getElementById('neon-color-select')?.value || '#00ff00';
-    }catch(e){}
+        const sel = document.getElementById('neon-color-select');
+        huColor = sel?.value || localStorage.getItem('securics_final_color') || localStorage.getItem('securics_neon_color') || '#ffff00';
+    }catch(e){ huColor = '#ffff00'; }
     const isNoNeon = document.body.classList.contains('no-neon-active') || document.getElementById('neon-id')?.classList.contains('no-neon');
     const huShadow = isNoNeon ? 'none' : `0 0 5px ${huColor}, 0 0 10px ${huColor}, 0 0 15px ${huColor}`;
+    const huShadowStyle = isNoNeon ? '' : `text-shadow:${huShadow};`;
+    const enColor = '#ffffff';
     const enShadow = '0 0 5px #ffffff';
 
-    if (document.body.classList.contains("zenburn-mode")) {
-        // 1. EN/HU fejlécek előre - hogy ne keveredjen az általános [.*] regex-el
+    if (true) { // mindkét módban színezzük
+        // 1. Védjük az EN/HU fejléceket
         html = html.replace(/--- \[(EN|HU)[^\]]*\] ---/g, function(m){
             const isHU = m.toUpperCase().includes('HU');
             if(isHU){
-                return `__HU_HEADER__${m}__END_HU_HEADER__`;
+                return `__HU_HEADER__${m}__END__`;
             } else {
-                return `__EN_HEADER__${m}__END_EN_HEADER__`;
+                return `__EN_HEADER__${m}__END__`;
             }
         });
-        html = html.replace(/\[(HU FORD[^\]]*)\]/g, function(m){
-            return `__HU_HEADER__${m}__END_HU_HEADER__`;
+        html = html.replace(/\[(HU FORD[^\]]*|HU MAGENTA|HU ZÖLD|HU)\]/gi, function(m){
+            return `__HU_HEADER__${m}__END__`;
         });
-        html = html.replace(/\[(OCR[^\]]*)\]/g, function(m){
-            return `__EN_HEADER__${m}__END_EN_HEADER__`;
-        });
-
-        // 2. Általános INI színezés
-        html = html.replace(/(\[.*?\])/g, '<span class="token-section">$1</span>');
-        html = html.replace(/^([\w\s]+=)/gm, '<span class="token-key">$1</span>');
-        html = html.replace(/(;.*$)/gm, '<span class="token-comment">$1</span>');
-
-        // 3. Most visszaalakítjuk az EN/HU fejléceket színesre
-        html = html.replace(/__EN_HEADER__(.*?)__END_EN_HEADER__/g, function(_, inner){
-            return `<span class="en-header">${inner}</span>`;
-        });
-        html = html.replace(/__HU_HEADER__(.*?)__END_HU_HEADER__/g, function(_, inner){
-            return `<span class="hu-header">${inner}</span>`;
+        html = html.replace(/\[(OCR[^\]]*|OCR TISZTA|OCR EREDETI[^\]]*)\]/gi, function(m){
+            return `__EN_HEADER__${m}__END__`;
         });
 
-        // 4. Tartalom színezés a fejlécek után - HU zöld (dinamikus), EN fehér
-        // Split by headers
-        let parts = html.split(/(<span class="(?:en-header|hu-header)">.*?<\/span>)/);
+        // 2. INI színezés csak zenburn módban
+        if(document.body.classList.contains("zenburn-mode")){
+            html = html.replace(/(__HU_HEADER__.*?__END__|__EN_HEADER__.*?__END__)/g, function(m){
+                return `__PROTECT_${btoa(m).replace(/=/g,'')}__`;
+            });
+            html = html.replace(/(\[.*?\])/g, '<span class="token-section">$1</span>');
+            html = html.replace(/^([\w\s]+=)/gm, '<span class="token-key">$1</span>');
+            html = html.replace(/(;.*$)/gm, '<span class="token-comment">$1</span>');
+            // restore protect
+            html = html.replace(/__PROTECT_(.*?)__/g, function(_, b64){
+                try{ return atob(b64); }catch(e){ return _; }
+            });
+        }
+
+        // 3. EN/HU fejlécek INLINE STYLE-al - GitHub cache-proof!
+        html = html.replace(/__EN_HEADER__(.*?)__END__/g, function(_, inner){
+            return `<span style="color:${enColor} !important; text-shadow:${enShadow} !important; font-weight:bold;">${inner}</span>`;
+        });
+        html = html.replace(/__HU_HEADER__(.*?)__END__/g, function(_, inner){
+            return `<span style="color:${huColor} !important; ${huShadowStyle} font-weight:bold;">${inner}</span>`;
+        });
+
+        // 4. Tartalom színezés
+        let parts = html.split(/(<span style="color:[^>]+>--- \[(?:EN|HU)[^\]]*\] ---<\/span>|<span style="color:[^>]+>\[(?:HU|OCR)[^\]]*\]<\/span>)/);
         let result = '';
         let mode = null;
         for(let i=0;i<parts.length;i++){
             let p = parts[i];
-            if(p.includes('en-header')){
+            if(p.includes('--- [EN') || p.includes('[OCR')){
                 mode = 'EN';
                 result += p;
-            } else if(p.includes('hu-header')){
+            } else if(p.includes('--- [HU') || p.includes('[HU')){
                 mode = 'HU';
                 result += p;
             } else {
                 if(mode === 'HU' && p.trim()){
-                    result += `<span class="hu-text">${p}</span>`;
-                } else if(mode === 'EN' && p.trim()){
-                    // Ha következő header jön, csak addig színezzük
-                    if(p.includes('en-header') || p.includes('hu-header') || p.includes('token-section')){
-                        // Van benne új header token - ne fessük túl
+                    if(p.includes('token-section') || p.includes('--- [')){
                         result += p;
                     } else {
-                        result += `<span class="en-text">${p}</span>`;
+                        result += `<span style="color:${huColor} !important; ${huShadowStyle} font-weight:bold;">${p}</span>`;
                     }
+                } else if(mode === 'EN' && p.trim()){
+                    result += `<span style="color:${enColor} !important; text-shadow:${enShadow} !important;">${p}</span>`;
                 } else {
                     result += p;
                 }
             }
         }
         html = result;
-    } else {
-        // N mód (nem zenburn) - akkor is színezzük az EN/HU blokkokat, csak INI nélkül
-        html = html.replace(/--- \[(EN|HU)[^\]]*\] ---/g, function(m){
-            const isHU = m.toUpperCase().includes('HU');
-            return isHU ? `<span class="hu-header">${m}</span>` : `<span class="en-header">${m}</span>`;
-        });
-        html = html.replace(/\[(HU FORD[^\]]*)\]/g, function(m){
-            return `<span class="hu-header">${m}</span>`;
-        });
-        html = html.replace(/\[(OCR[^\]]*)\]/g, function(m){
-            return `<span class="en-header">${m}</span>`;
-        });
-        // Tartalom is
-        let parts = html.split(/(<span class="(?:en-header|hu-header)">.*?<\/span>)/);
-        let result = '';
-        let mode = null;
-        for(let i=0;i<parts.length;i++){
-            let p = parts[i];
-            if(p.includes('en-header')){ mode='EN'; result+=p; }
-            else if(p.includes('hu-header')){ mode='HU'; result+=p; }
-            else {
-                if(mode==='HU' && p.trim()) result+=`<span class="hu-text">${p}</span>`;
-                else if(mode==='EN' && p.trim()) result+=`<span class="en-text">${p}</span>`;
-                else result+=p;
-            }
-        }
-        html = result;
     }
 
     highlight.innerHTML = html + (editor.value.endsWith('\n') ? ' ' : '');
-    // Frissítjük a dinamikus színt CSS változóban
     try{
         document.documentElement.style.setProperty('--hu-color', huColor);
         document.documentElement.style.setProperty('--hu-shadow', huShadow);
-        document.documentElement.style.setProperty('--en-shadow', enShadow);
     }catch(e){}
 }
 function syncScroll() { document.getElementById("highlight").scrollTop = document.getElementById("editor").scrollTop; }
@@ -1226,31 +1199,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
       if(typeof applyHighlight==='function') applyHighlight();
     }, 400);
   });
-})();
-</script>
-
-
-<script>
-(function(){
-  // GitHub fix: after any save, force re-apply highlight with current switch color
-  function forceHuColorAfterSave(){
-    setTimeout(()=>{
-      const sel = document.getElementById('neon-color-select');
-      const hex = sel?.value || '#ffff00';
-      document.documentElement.style.setProperty('--hu-color', hex);
-      const isOff = document.getElementById('neon-id')?.classList.contains('no-neon');
-      const shadow = isOff ? 'none' : `0 0 5px ${hex}, 0 0 10px ${hex}, 0 0 15px ${hex}`;
-      document.documentElement.style.setProperty('--hu-shadow', shadow);
-      if(typeof applyHighlight==='function') applyHighlight();
-    }, 100);
-  }
-  // Hook into precise save toast and ocr insert
-  const origShowToast = window.showSaveToast;
-  window.showSaveToast = function(msg){
-    if(origShowToast) origShowToast(msg);
-    forceHuColorAfterSave();
-  };
-  window.addEventListener('storage', forceHuColorAfterSave);
 })();
 </script>
 
