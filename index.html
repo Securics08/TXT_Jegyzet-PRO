@@ -82,6 +82,17 @@ button,select,input{background:#000;color:var(--text);border:1px solid var(--bor
   box-shadow:0 0 20px rgba(0,255,136,0.8);
 }
 
+
+:root{ --hu-color:#00ff00; --hu-shadow:0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00; --en-shadow:0 0 5px #ffffff; }
+.en-header{ color:#ffffff !important; text-shadow:var(--en-shadow) !important; font-weight:bold; }
+.hu-header{ color:var(--hu-color) !important; text-shadow:var(--hu-shadow) !important; font-weight:bold; }
+.en-text{ color:#ffffff !important; }
+.hu-text{ color:var(--hu-color) !important; text-shadow:var(--hu-shadow) !important; font-weight:bold; }
+.token-section{ color:#ffcc00 !important; font-weight:bold; }
+.token-key{ color:#7ec8ff !important; }
+.token-comment{ color:#888888 !important; font-style:italic; }
+body.no-neon-active .hu-header, body.no-neon-active .hu-text, body.no-neon-active .en-header { text-shadow:none !important; }
+
 </style>
 </head>
 <body class="zenburn-mode">
@@ -265,11 +276,114 @@ function resetApp() { if (confirm("MINDEN törlődik!")) { const t = db.transact
 function applyHighlight() {
     const editor = document.getElementById("editor");
     const highlight = document.getElementById("highlight");
-    let html = editor.value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    let raw = editor.value;
+    let html = raw.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    // Dinamikus HU szín olvasása
+    let huColor = '#00ff00';
+    try{
+        huColor = localStorage.getItem('securics_final_color') || localStorage.getItem('securics_neon_color') || document.getElementById('neon-color-select')?.value || '#00ff00';
+    }catch(e){}
+    const isNoNeon = document.body.classList.contains('no-neon-active') || document.getElementById('neon-id')?.classList.contains('no-neon');
+    const huShadow = isNoNeon ? 'none' : `0 0 5px ${huColor}, 0 0 10px ${huColor}, 0 0 15px ${huColor}`;
+    const enShadow = '0 0 5px #ffffff';
+
     if (document.body.classList.contains("zenburn-mode")) {
-        html = html.replace(/(\[.*?\])/g, '<span class="token-section">$1</span>').replace(/^([\w\s]+=)/gm, '<span class="token-key">$1</span>').replace(/(;.*$)/gm, '<span class="token-comment">$1</span>');
+        // 1. EN/HU fejlécek előre - hogy ne keveredjen az általános [.*] regex-el
+        html = html.replace(/--- \[(EN|HU)[^\]]*\] ---/g, function(m){
+            const isHU = m.toUpperCase().includes('HU');
+            if(isHU){
+                return `__HU_HEADER__${m}__END_HU_HEADER__`;
+            } else {
+                return `__EN_HEADER__${m}__END_EN_HEADER__`;
+            }
+        });
+        html = html.replace(/\[(HU FORD[^\]]*)\]/g, function(m){
+            return `__HU_HEADER__${m}__END_HU_HEADER__`;
+        });
+        html = html.replace(/\[(OCR[^\]]*)\]/g, function(m){
+            return `__EN_HEADER__${m}__END_EN_HEADER__`;
+        });
+
+        // 2. Általános INI színezés
+        html = html.replace(/(\[.*?\])/g, '<span class="token-section">$1</span>');
+        html = html.replace(/^([\w\s]+=)/gm, '<span class="token-key">$1</span>');
+        html = html.replace(/(;.*$)/gm, '<span class="token-comment">$1</span>');
+
+        // 3. Most visszaalakítjuk az EN/HU fejléceket színesre
+        html = html.replace(/__EN_HEADER__(.*?)__END_EN_HEADER__/g, function(_, inner){
+            return `<span class="en-header">${inner}</span>`;
+        });
+        html = html.replace(/__HU_HEADER__(.*?)__END_HU_HEADER__/g, function(_, inner){
+            return `<span class="hu-header">${inner}</span>`;
+        });
+
+        // 4. Tartalom színezés a fejlécek után - HU zöld (dinamikus), EN fehér
+        // Split by headers
+        let parts = html.split(/(<span class="(?:en-header|hu-header)">.*?<\/span>)/);
+        let result = '';
+        let mode = null;
+        for(let i=0;i<parts.length;i++){
+            let p = parts[i];
+            if(p.includes('en-header')){
+                mode = 'EN';
+                result += p;
+            } else if(p.includes('hu-header')){
+                mode = 'HU';
+                result += p;
+            } else {
+                if(mode === 'HU' && p.trim()){
+                    result += `<span class="hu-text">${p}</span>`;
+                } else if(mode === 'EN' && p.trim()){
+                    // Ha következő header jön, csak addig színezzük
+                    if(p.includes('en-header') || p.includes('hu-header') || p.includes('token-section')){
+                        // Van benne új header token - ne fessük túl
+                        result += p;
+                    } else {
+                        result += `<span class="en-text">${p}</span>`;
+                    }
+                } else {
+                    result += p;
+                }
+            }
+        }
+        html = result;
+    } else {
+        // N mód (nem zenburn) - akkor is színezzük az EN/HU blokkokat, csak INI nélkül
+        html = html.replace(/--- \[(EN|HU)[^\]]*\] ---/g, function(m){
+            const isHU = m.toUpperCase().includes('HU');
+            return isHU ? `<span class="hu-header">${m}</span>` : `<span class="en-header">${m}</span>`;
+        });
+        html = html.replace(/\[(HU FORD[^\]]*)\]/g, function(m){
+            return `<span class="hu-header">${m}</span>`;
+        });
+        html = html.replace(/\[(OCR[^\]]*)\]/g, function(m){
+            return `<span class="en-header">${m}</span>`;
+        });
+        // Tartalom is
+        let parts = html.split(/(<span class="(?:en-header|hu-header)">.*?<\/span>)/);
+        let result = '';
+        let mode = null;
+        for(let i=0;i<parts.length;i++){
+            let p = parts[i];
+            if(p.includes('en-header')){ mode='EN'; result+=p; }
+            else if(p.includes('hu-header')){ mode='HU'; result+=p; }
+            else {
+                if(mode==='HU' && p.trim()) result+=`<span class="hu-text">${p}</span>`;
+                else if(mode==='EN' && p.trim()) result+=`<span class="en-text">${p}</span>`;
+                else result+=p;
+            }
+        }
+        html = result;
     }
+
     highlight.innerHTML = html + (editor.value.endsWith('\n') ? ' ' : '');
+    // Frissítjük a dinamikus színt CSS változóban
+    try{
+        document.documentElement.style.setProperty('--hu-color', huColor);
+        document.documentElement.style.setProperty('--hu-shadow', huShadow);
+        document.documentElement.style.setProperty('--en-shadow', enShadow);
+    }catch(e){}
 }
 function syncScroll() { document.getElementById("highlight").scrollTop = document.getElementById("editor").scrollTop; }
 function updateStats() {
@@ -285,7 +399,12 @@ function toggleUnderline() { const style = document.getElementById("editor").sty
 function toggleDark() { document.body.classList.toggle("light"); }
 function undo() { document.execCommand('undo'); }
 function redo() { document.execCommand('redo'); }
-function setZenburn(on) { if(on) document.body.classList.add("zenburn-mode"); else document.body.classList.remove("zenburn-mode"); applyHighlight(); }
+function setZenburn(on) { 
+  if(on){ document.body.classList.add("zenburn-mode"); } 
+  else { document.body.classList.remove("zenburn-mode"); }
+  try{ localStorage.setItem('securics_zenburn', on ? 'on' : 'off'); }catch(e){}
+  if(typeof applyHighlight === 'function') applyHighlight();
+}
 function updateStyles() {
     const hex = document.getElementById("bgColor").value;
     const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
@@ -379,14 +498,22 @@ function insertOcrToNote(){
     const cleanEl = document.getElementById('ocr-clean-text');
     const huEl = document.getElementById('ocr-hu-text');
     let txt = "";
-    if(cleanEl && cleanEl.innerText) txt += "\n[OCR TISZTA]\n" + cleanEl.innerText + "\n";
-    if(huEl && huEl.value) txt += "\n[HU MAGENTA]\n" + huEl.value + "\n";
-    else if(huEl && huEl.innerText) txt += "\n[HU]\n" + huEl.innerText + "\n";
+    if(cleanEl && cleanEl.innerText) txt += "[OCR EREDETI - FEHÉR]\n" + cleanEl.innerText.trim() + "\n\n";
+    if(huEl && huEl.value) txt += "[HU FORDÍTÁS - NEON ZÖLD]\n" + huEl.value.trim() + "\n\n";
+    else if(huEl && huEl.innerText) txt += "[HU FORDÍTÁS - NEON ZÖLD]\n" + huEl.innerText.trim() + "\n\n";
     if(!txt) { alert("Nincs OCR szöveg!"); return; }
-    document.getElementById('editor').value += txt;
+    const ed = document.getElementById('editor');
+    const s = ed.selectionStart || 0;
+    const e = ed.selectionEnd || 0;
+    if(s===0 && e===0){
+        ed.value = txt + "\n" + ed.value;
+        ed.scrollTop = 0;
+    } else {
+        ed.value = ed.value.substring(0,s) + "\n" + txt + "\n" + ed.value.substring(e);
+    }
     handleInput();
     closeOcrOverlay();
-    alert("Beszúrva a jegyzetbe!");
+    alert("Beszúrva FELÜLRE: eredeti FEHÉR, fordítás a kapcsoló színe szerint ✓");
 }
 
 window.addEventListener('load', ()=>{ setTimeout(updatePreciseCounter, 1200); setTimeout(updatePreciseCounter, 3000); });
@@ -711,7 +838,15 @@ window.insertPreciseToNote = function(text, lang){
     const prefix = lang || 'TXT';
     const ts = new Date().toLocaleString('hu-HU');
     const toAdd = "\n\n--- [" + prefix + " " + ts + "] ---\n" + text + "\n";
-    editor.value += toAdd;
+        // FELÜLRE mentés, nem lentre
+    const sPos = editor.selectionStart || 0;
+    const ePos = editor.selectionEnd || 0;
+    if(sPos===0 && ePos===0){
+        editor.value = toAdd + "\n" + editor.value;
+        editor.scrollTop = 0;
+    } else {
+        editor.value = editor.value.substring(0,sPos) + "\n" + toAdd + "\n" + editor.value.substring(ePos);
+    }
     // LILA MÓDRA: handleInput() ami csinálja: notes[current]=editor.value + applyHighlight + updateStats + saveData
     if(typeof handleInput === 'function'){
       handleInput();
@@ -934,7 +1069,15 @@ window.insertPreciseToNote = function(text, lang){
     const prefix = lang || 'TXT';
     const ts = new Date().toLocaleString('hu-HU');
     const toAdd = "\n\n--- [" + prefix + " " + ts + "] ---\n" + text + "\n";
-    editor.value += toAdd;
+        // FELÜLRE mentés, nem lentre
+    const sPos = editor.selectionStart || 0;
+    const ePos = editor.selectionEnd || 0;
+    if(sPos===0 && ePos===0){
+        editor.value = toAdd + "\n" + editor.value;
+        editor.scrollTop = 0;
+    } else {
+        editor.value = editor.value.substring(0,sPos) + "\n" + toAdd + "\n" + editor.value.substring(ePos);
+    }
     // LILA MÓDRA: handleInput() ami csinálja: notes[current]=editor.value + applyHighlight + updateStats + saveData
     if(typeof handleInput === 'function'){
       handleInput();
@@ -1031,6 +1174,53 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }catch(e){}
   }
 });
+</script>
+
+
+<script>
+(function(){
+  function updateHuColor(hex){
+    const isNoNeon = document.getElementById('neon-id')?.classList.contains('no-neon');
+    const shadow = isNoNeon ? 'none' : `0 0 5px ${hex}, 0 0 10px ${hex}, 0 0 15px ${hex}`;
+    document.documentElement.style.setProperty('--hu-color', hex);
+    document.documentElement.style.setProperty('--hu-shadow', shadow);
+    try{ localStorage.setItem('securics_hu_dynamic_color', hex); }catch(e){}
+    if(typeof applyHighlight === 'function') applyHighlight();
+  }
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const sel = document.getElementById('neon-color-select');
+    const neonId = document.getElementById('neon-id');
+    const toggleBtn = document.getElementById('neon-toggle-btn');
+    function getHex(){ return sel?.value || localStorage.getItem('securics_final_color') || '#00ff00'; }
+    if(sel){
+      sel.addEventListener('change', (e)=>{ updateHuColor(e.target.value); });
+    }
+    if(toggleBtn){
+      toggleBtn.addEventListener('click', ()=>{
+        setTimeout(()=>{
+          const isOff = neonId?.classList.contains('no-neon');
+          const hex = getHex();
+          if(isOff){
+            document.body.classList.add('no-neon-active');
+            document.documentElement.style.setProperty('--hu-shadow', 'none');
+          } else {
+            document.body.classList.remove('no-neon-active');
+            document.documentElement.style.setProperty('--hu-shadow', `0 0 5px ${hex}, 0 0 10px ${hex}, 0 0 15px ${hex}`);
+          }
+          if(typeof applyHighlight==='function') applyHighlight();
+        }, 80);
+      });
+    }
+    setTimeout(()=>{
+      const saved = localStorage.getItem('securics_final_color') || localStorage.getItem('securics_neon_color') || '#00ff00';
+      updateHuColor(saved);
+      const zb = localStorage.getItem('securics_zenburn');
+      if(zb==='off') document.body.classList.remove('zenburn-mode');
+      else document.body.classList.add('zenburn-mode');
+      if(typeof applyHighlight==='function') applyHighlight();
+    }, 400);
+  });
+})();
 </script>
 
 </body>
