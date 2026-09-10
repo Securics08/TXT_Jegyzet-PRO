@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Végtelen Jegyzet PRO - STABLE V.01 + OCR 2-es</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Abel&family=Abril+Fatface&family=Acme&family=Alegreya&family=Alex+Brush&family=Alfa+Slab+One&family=Alice&family=Alumni+Sans+Inline+One&family=Amatic+SC&family=Amita&family=Antic+Didone&family=Anton&family=Architects+Daughter&family=Archivo+Black&family=Are+You+Serious&family=Arima+Madurai&family=Arvo&family=Asap&family=Asset&family=Atomic+Age&family=Audiowide&family=Bangers&family=Barlow+Condensed&family=Bebas+Neue&family=Berkshire+Swash&family=Bevan&family=Bigelow+Rules&family=Black+Ops+One&family=Bonbon&family=Boogaloo&family=Bowlby+One+SC&family=Bungee+Shade&family=Butcherman&family=Cabin+Sketch&family=Caesar+Dressing&family=Carter+One&family=Caveat&family=Cinzel+Decorative&family=Codystar&family=Comfortaa&family=Coming+Soon&family=Concert+One&family=Cookie&family=Courgette&family=Creepster&family=Dancing+Script&family=Diplomata+SC&family=Domine&family=Eater&family=EB+Garamond&family=Emblema+One&family=Ewert&family=Fascinate+Inline&family=Faster+One&family=Finger+Paint&family=Flavors&family=Fontdiner+Swanky&family=Fredericka+the+Great&family=Frijole&family=Fugaz+One&family=Glass+Antiqua&family=Gloria+Hallelujah&family=Gochi+Hand&family=Great+Vibes&family=Grenze+Gotisch&family=Griffy&family=Handlee&family=Henny+Penny&family=Iceberg&family=Indie+Flower&family=Irish+Grover&family=Italianno&family=Jolly+Lodger&family=Kaushan+Script&family=Kelly+Slab&family=Kranky&family=Kumar+One&family=Lobster&family=Londrina+Shadow&family=Luckiest+Guy&family=Macondo&family=MedievalSharp&family=Megrim&family=Metal+Mania&family=Modak&family=Monoton&family=Mountains+of+Christmas&family=Mystery+Quest&family=Nabla&family=Nosifer&family=Nothing+You+Could+Do&family=Orbitron&family=Pacifico&family=Parisienne&family=Permanent+Marker&family=Pinyon+Script&family=Playfair+Display&family=Press+Start+2P&family=Righteous&family=Rubik+Glitch&family=Sacramento&family=Satisfy&family=Shadows+Into+Light&family=Silkscreen&family=Special+Elite&family=Syncopate&family=Ultra&family=UnifrakturMaguntia&family=VT323&family=Wallpoet&family=Zeyada&family=Montserrat&family=Nunito&family=Oswald&family=Spectral&family=Varela+Round&family=Roboto+Serif&family=Roboto+Mono&display=swap" rel="stylesheet">
 <style>
@@ -178,7 +179,7 @@ body.no-neon-active .hu-header, body.no-neon-active .hu-text, body.no-neon-activ
     </div>
 
     <div class="group">
-        <button onclick="importFiles()" class="success-import">📁 Import</button> <button onclick="saveIni()" style="color:#ffcc00">📜 INI</button> <button onclick="downloadPDF()" style="color:#ff5555">📄 PDF</button> <button onclick="downloadTxt()" style="color:#ff55ff">⬇ TXT</button> <button onclick="downloadAllZip()" style="color:#55ff55">📦 ZIP</button> 
+        <button onclick="importFiles()" class="success-import">📁 Import</button> <button onclick="saveIni()" style="color:#ffcc00">📜 INI</button> <button onclick="downloadPDF()" style="color:#ff5555">📄 PDF</button> <button onclick="downloadPDFColor()" style="color:#000; background:linear-gradient(90deg,#ff5555,#ffcc00,#55ff55,#55ffff,#8855ff); font-weight:bold;">🌈 PDF színes</button> <button onclick="downloadTxt()" style="color:#ff55ff">⬇ TXT</button> <button onclick="downloadAllZip()" style="color:#55ff55">📦 ZIP</button> 
     </div>
 
     <div class="group">
@@ -505,6 +506,51 @@ async function importFiles() {
 function saveIni() { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([document.getElementById("editor").value])); a.download = current+".ini"; a.click(); }
 function downloadTxt() { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([document.getElementById("editor").value])); a.download = current + ".txt"; a.click(); }
 function downloadPDF() { const doc = new jspdf.jsPDF(); doc.text(document.getElementById("editor").value, 10, 10); doc.save(current + ".pdf"); }
+async function downloadPDFColor(){
+  const src = document.getElementById("highlight");
+  if(!src){ alert("Nincs megjeleníthető tartalom."); return; }
+  const bg = getComputedStyle(document.body).getPropertyValue("--bg") || "#0c0c0c";
+  const clone = src.cloneNode(true);
+  clone.style.position = "fixed";
+  clone.style.left = "-99999px";
+  clone.style.top = "0";
+  clone.style.width = src.clientWidth + "px";
+  clone.style.height = "auto";
+  clone.style.maxHeight = "none";
+  clone.style.overflow = "visible";
+  clone.style.whiteSpace = "pre-wrap";
+  clone.style.background = bg.trim() || "#0c0c0c";
+  clone.style.padding = "16px";
+  document.body.appendChild(clone);
+  try{
+    const canvas = await html2canvas(clone, {backgroundColor: bg.trim() || "#0c0c0c", scale: 2, useCORS: true});
+    document.body.removeChild(clone);
+    const doc = new jspdf.jsPDF({unit:"mm", format:"a4"});
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const imgWmm = pageW;
+    const pxPerMm = canvas.width / imgWmm;
+    const pageHpx = Math.floor(pageH * pxPerMm);
+    let renderedPx = 0, first = true;
+    while(renderedPx < canvas.height){
+      const sliceH = Math.min(pageHpx, canvas.height - renderedPx);
+      const pageCanvas = document.createElement("canvas");
+      pageCanvas.width = canvas.width;
+      pageCanvas.height = sliceH;
+      const ctx = pageCanvas.getContext("2d");
+      ctx.drawImage(canvas, 0, renderedPx, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+      const imgData = pageCanvas.toDataURL("image/jpeg", 0.92);
+      if(!first) doc.addPage();
+      doc.addImage(imgData, "JPEG", 0, 0, imgWmm, sliceH / pxPerMm);
+      renderedPx += sliceH;
+      first = false;
+    }
+    doc.save((current || "jegyzet") + "_szines.pdf");
+  }catch(e){
+    if(clone.parentNode) document.body.removeChild(clone);
+    alert("Nem sikerült a színes PDF mentése: " + e.message);
+  }
+}
 function downloadAllZip() {
     const customName = prompt("Név:");
     const date = new Date().toISOString().slice(0, 10);
