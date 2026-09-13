@@ -496,8 +496,24 @@ async function importFiles() {
             if (file.name.endsWith('.zip')) {
                 const zip = await JSZip.loadAsync(file);
                 for (const path in zip.files) { if (!zip.files[path].dir) { notes[path.split('/').pop()] = await zip.files[path].async("string"); } }
-            } else { notes[file.name] = await file.text(); }
-            current = file.name;
+                current = Object.keys(notes)[0] || current;
+            } else if (file.name.toLowerCase().endsWith('.json')) {
+                try{
+                    const parsed = JSON.parse(await file.text());
+                    if(parsed && typeof parsed === 'object' && parsed.notes && typeof parsed.notes === 'object'){
+                        Object.assign(notes, parsed.notes);
+                        if(parsed.colorRanges && typeof parsed.colorRanges === 'object'){
+                            const all = getColorRanges();
+                            Object.assign(all, parsed.colorRanges);
+                            saveColorRanges();
+                        }
+                        current = Object.keys(parsed.notes)[0] || current;
+                    } else if(parsed && typeof parsed === 'object'){
+                        Object.assign(notes, parsed);
+                        current = Object.keys(parsed)[0] || current;
+                    }
+                }catch(err){ alert('Hibás JSON fájl: ' + file.name); }
+            } else { notes[file.name] = await file.text(); current = file.name; }
         }
         saveData(); refresh(); alert("Kész!");
     };
@@ -562,7 +578,22 @@ function downloadAllZip() {
         a.href = URL.createObjectURL(c); a.click();
     });
 }
-function exportJSON(){ const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(notes, null, 2)])); a.download = "mentes.json"; a.click(); }
+function exportJSON(){
+  const now = new Date();
+  const pad = n => String(n).padStart(2,"0");
+  const stamp = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}_${pad(now.getHours())}_${pad(now.getMinutes())}`;
+  const defaultName = `Securics-08-TXT-Save_STABLE_V.03___${stamp}`;
+  let name = prompt("Fájlnév a JSON mentéshez:", defaultName);
+  if(name === null) return;
+  name = name.trim();
+  if(!name) name = defaultName;
+  if(!/\.json$/i.test(name)) name += ".json";
+  const backup = { notes: notes, colorRanges: getColorRanges(), exportedAt: now.toISOString() };
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], {type:"application/json"}));
+  a.download = name;
+  a.click();
+}
 function searchText(){
     let q=document.getElementById("search").value.toLowerCase(); if(!q) return;
     let pos=document.getElementById("editor").value.toLowerCase().indexOf(q);
