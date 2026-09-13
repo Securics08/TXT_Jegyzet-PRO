@@ -94,6 +94,40 @@ button,select,input{background:#000;color:var(--text);border:1px solid var(--bor
 .token-comment{ color:#888888 !important; font-style:italic; }
 body.no-neon-active .hu-header, body.no-neon-active .hu-text, body.no-neon-active .en-header { text-shadow:none !important; }
 
+
+/* === KIEMELT GOOGLE KÉPFORDÍTÓ GOMB - VÉGTELEN JEGYZETBE === */
+@keyframes googlePulse{
+  0%{ transform:scale(1); box-shadow:0 0 12px #ffcc33aa; }
+  100%{ transform:scale(1.05); box-shadow:0 0 22px #ffdd33ff, 0 0 36px #ffcc3388; }
+}
+.btn-google-highlight{
+  background: linear-gradient(90deg,#ffcc33,#ffea70,#ffcc33) !important;
+  color:#111 !important;
+  border:2px solid #ffdd33 !important;
+  font-weight:900 !important;
+  font-size:14px !important;
+  padding:10px 20px !important;
+  border-radius:12px !important;
+  box-shadow:0 0 18px #ffcc33aa, 0 0 32px #ffcc3355 !important;
+  animation: googlePulse 1.6s infinite alternate !important;
+  cursor:pointer;
+  letter-spacing:0.02em;
+}
+.btn-google-highlight:hover{ filter:brightness(1.1); transform:scale(1.06); }
+/* OCR 2-es Teljes kép - neon lila keret mint a képen */
+.btn-ocr2-neon{
+  background:#0a0a0a !important;
+  color:#00ff88 !important;
+  border:2px solid #ff00ff !important;
+  box-shadow: 0 0 8px #ff00ff, inset 0 0 6px rgba(255,0,255,0.3) !important;
+  font-weight:bold !important;
+  border-radius:10px !important;
+  padding:8px 16px !important;
+}
+.btn-ocr2-neon .dot-green{
+  display:inline-block; width:18px; height:18px; background:#7aff7a; border-radius:4px; vertical-align:middle; margin-right:8px; box-shadow:0 0 6px #7aff7a;
+}
+
 </style>
 </head>
 <body class="zenburn-mode">
@@ -140,7 +174,8 @@ body.no-neon-active .hu-header, body.no-neon-active .hu-text, body.no-neon-activ
 
     <div class="group">
         <button onclick="openHtmlEditor()" class="color-cyan">🛠 HTML Szerkesztő</button> 
-        <button onclick="openOcrOverlay()" style="color:#ff00ff;border-color:#ff00ff;font-weight:bold;box-shadow:0 0 8px #ff00ff;">🟩 OCR 2-es Teljes kép</button>
+        <button onclick="window.open('https://translate.google.com/?sl=auto&tl=hu&op=images','_blank')" class="btn-google-highlight" title="Megnyitja: https://translate.google.com/?sl=auto&tl=hu&op=images">🌐 📸 GOOGLE KÉPFORDÍTÓ</button>
+        <button onclick="openOcrOverlay()" class="btn-ocr2-neon"><span class="dot-green"></span>OCR 2-es Teljes kép</button>
         <button onclick="insertTimestamp()" class="color-red">📅 Dátum</button>
     </div>
 
