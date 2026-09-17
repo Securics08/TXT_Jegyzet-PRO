@@ -357,7 +357,14 @@ function loadFromDB() {
 }
 
 
-function saveData() { 
+function saveData() {
+  // Ha iframe-ben vagyunk 10in1-ben, küldjük a szülőnek is
+  try{
+    if(window.parent && window.parent !== window){
+      window.parent.postMessage({type:'SAVE_NOTES_10in1', notes: notes, current: current, backup: JSON.stringify(notes)}, '*');
+    }
+  }catch(e){}
+ 
   if (!db) return;
   try{
     const transaction = db.transaction(["notes"], "readwrite"); 
@@ -1612,6 +1619,32 @@ document.addEventListener('DOMContentLoaded', function(){
     }, 5000);
   }catch(e){}
 });
+</script>
+
+
+<script>
+(function(){
+  // Kérjük a jegyzeteket a szülőtől 10in1-ben
+  try{
+    if(window.parent && window.parent !== window){
+      window.parent.postMessage({type:'LOAD_NOTES_REQUEST_10in1'}, '*');
+    }
+  }catch(e){}
+  window.addEventListener('message', function(ev){
+    try{
+      if(ev.data && ev.data.type==='LOAD_NOTES_RESPONSE_10in1' && ev.data.notes){
+        const data = ev.data.notes;
+        if(data && typeof data==='object' && Object.keys(data).length>0){
+          notes = data;
+          current = ev.data.current || Object.keys(data)[0];
+          if(typeof refresh==='function') refresh();
+          if(typeof saveData==='function') saveData();
+          console.log('Betöltve szülőtől 10in1', Object.keys(notes).length);
+        }
+      }
+    }catch(e){}
+  });
+})();
 </script>
 
 </body>
