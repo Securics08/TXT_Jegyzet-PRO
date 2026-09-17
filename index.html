@@ -1435,6 +1435,7 @@ function closeGaleriaMenu(){ document.getElementById('galeria-overlay').style.di
 </script>
 
 
+
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   const wrapper = document.getElementById('custom-neon-wrapper');
@@ -1444,16 +1445,33 @@ document.addEventListener('DOMContentLoaded', function(){
   const nativeSelect = document.getElementById('neon-color-select');
   const opts = document.querySelectorAll('.neon-opt');
   
-  function updateHeader(color, name){
+  const STORAGE_KEY = 'securics_final_color';
+  const STORAGE_NAME_KEY = 'securics_final_color_name';
+  
+  function updateHeader(color, name, save=true){
     header.style.borderColor = color;
     header.style.color = color;
     header.style.boxShadow = '0 0 15px ' + color;
     text.textContent = name;
-    // Also update native select and trigger change
     if(nativeSelect){
       nativeSelect.value = color;
       nativeSelect.dispatchEvent(new Event('change'));
     }
+    if(save){
+      try{
+        localStorage.setItem(STORAGE_KEY, color);
+        localStorage.setItem(STORAGE_NAME_KEY, name);
+        localStorage.setItem('securics_neon_color', color);
+      }catch(e){}
+    }
+    // Also update textColor box
+    try{
+      if(window.setChosenTextColor) setChosenTextColor(color);
+      else {
+        const box = document.getElementById('textColorHexBox');
+        if(box) box.textContent = color.replace('#','').toUpperCase();
+      }
+    }catch(e){}
   }
   
   header.addEventListener('click', function(e){
@@ -1465,8 +1483,9 @@ document.addEventListener('DOMContentLoaded', function(){
     opt.addEventListener('click', function(){
       const col = this.dataset.value;
       const name = this.dataset.name;
-      updateHeader(col, name);
+      updateHeader(col, name, true);
       list.style.display = 'none';
+      if(typeof applyHighlight === 'function') setTimeout(applyHighlight, 100);
     });
     opt.addEventListener('mouseenter', function(){
       this.style.transform = 'scale(1.02)';
@@ -1482,10 +1501,27 @@ document.addEventListener('DOMContentLoaded', function(){
     list.style.display = 'none';
   });
   
-  // Init with Cyan
-  updateHeader('#00ffff','Cyán');
+  // Load saved color or default to Cyán
+  let savedColor = null;
+  let savedName = null;
+  try{
+    savedColor = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('securics_neon_color');
+    savedName = localStorage.getItem(STORAGE_NAME_KEY);
+  }catch(e){}
+  
+  if(savedColor){
+    // Find name for color if not saved
+    if(!savedName){
+      const found = document.querySelector(`.neon-opt[data-value="${savedColor}"]`);
+      savedName = found ? found.dataset.name : savedColor;
+    }
+    updateHeader(savedColor, savedName, false);
+  } else {
+    updateHeader('#00FFFF','Cyán', false);
+  }
 });
 </script>
+
 
 </body>
 </html>
