@@ -95,40 +95,77 @@ button,select,input{background:#000;color:var(--text);border:1px solid var(--bor
 body.no-neon-active .hu-header, body.no-neon-active .hu-text, body.no-neon-active .en-header { text-shadow:none !important; }
 
 </style>
+<!-- 100 ABLAK + UBLOCK FIX -->
+<script>
+(function(){ var _open=window.open; window.open=function(u,n,s){ try{ return _open.call(window,u,n,s); }catch(e){ var a=document.createElement('a'); a.href=u; a.target=n||'_blank'; a.click(); return null; } }; })();
+</script>
 </head>
 <body class="zenburn-mode">
 
 <div id="topbar">
     
 <div style="display:flex; align-items:center; flex-wrap:wrap; gap:10px;">
-  <div id="neon-id">Securics-08-TXT-Save_STABLE_V.03 + Precíz 2-es (Kereső mellett) + Precíz + OCR</div>
+  <div id="neon-id">Securics-08-TXT-Save_STABLE_V.03 + Precíz 2-es (Kereső mellett) + Precíz + OCR</div><button onclick="openGaleriaMenu()" id="galeriaMenuBtn" style="background:#0f0 !important; color:#000 !important; border:2px solid #0f0 !important; border-radius:8px; padding:8px 16px; font-weight:900; margin-left:12px; cursor:pointer; font-family:Orbitron,sans-serif;">🖼️ Galéria</button>
   <div id="neon-controls">
-    <select id="neon-color-select" style="background:#111; color:#fff; border:1px solid #555; padding:6px 10px; border-radius:6px; font-weight:bold;">
-      <option value="#00ffff">Cyán</option>
-      <option value="#ff1a1a">Piros</option>
-      <option value="#1a8cff">Kék</option>
-      <option value="#00ff00">Zöld</option>
-      <option value="#ffff00" selected>Sárga</option>
-      <option value="#ff00ff">Magenta</option>
-      <option value="#ff8800">Narancs</option>
-      <option value="#ffffff">Fehér</option>
-      <option value="#8800ff">Lila</option>
-      <option value="#ff66cc">Rózsaszín</option>
-      <option value="#00ffaa">Türkiz</option>
-      <option value="#aaff00">Lime</option>
-      <option value="#4400ff">Indigó</option>
-      <option value="#ff5555">Korall</option>
-      <option value="#55ffaa">Menta</option>
-      <option value="#ffcc00">Arany</option>
-      <option value="#cccccc">Ezüst</option>
-      <option value="#aa0033">Bordó</option>
-      <option value="#996633">Barna</option>
-      <option value="#669900">Olajzöld</option>
-      <option value="#33ccff">Égkék</option>
-      <option value="#cc99ff">Levendula</option>
-      <option value="#0033cc">Zafír</option>
-      <option value="#33ff33">Neonzöld</option>
-    </select>
+    
+<div id="custom-neon-wrapper" style="position:relative; display:inline-block; font-family:Orbitron,sans-serif;">
+  <div id="custom-neon-header" style="background:#000; color:#00ffff; border:2px solid #00ffff; padding:8px 30px 8px 14px; border-radius:8px; font-weight:900; cursor:pointer; box-shadow:0 0 15px #00ffff; min-width:120px; position:relative;">
+    <span id="custom-neon-text">Cyán</span>
+    <span style="position:absolute; right:8px; top:50%; transform:translateY(-50%);">▼</span>
+  </div>
+  <div id="custom-neon-list" style="display:none; position:absolute; top:100%; left:0; right:0; background:#000; border:2px solid #333; border-radius:8px; max-height:400px; overflow-y:auto; z-index:9999; padding:6px; margin-top:4px; box-shadow:0 0 20px rgba(0,255,255,0.5);">
+<div class="neon-opt main-opt" data-value="#00FFFF" data-name="Cyán" data-rgb="0,255,255" style="background:#00FFFF; color:#000; border:2px solid #00FFFF; box-shadow:0 0 10px #00FFFF; font-weight:900; padding:10px 12px; margin:2px 0; border-radius:6px; cursor:pointer; font-size:14px;">● Cyán <span style="font-size:10px; opacity:0.8;">#00FFFF</span></div>
+<div class="neon-opt main-opt" data-value="#FF0000" data-name="Piros" data-rgb="255,0,0" style="background:#FF0000; color:#000; border:2px solid #FF0000; box-shadow:0 0 10px #FF0000; font-weight:900; padding:10px 12px; margin:2px 0; border-radius:6px; cursor:pointer; font-size:14px;">● Piros <span style="font-size:10px; opacity:0.8;">#FF0000</span></div>
+<div class="neon-opt main-opt" data-value="#0000FF" data-name="Kék" data-rgb="0,0,255" style="background:#0000FF; color:#fff; border:2px solid #0000FF; box-shadow:0 0 10px #0000FF; font-weight:900; padding:10px 12px; margin:2px 0; border-radius:6px; cursor:pointer; font-size:14px;">● Kék <span style="font-size:10px; opacity:0.8;">#0000FF</span></div>
+<div class="neon-opt main-opt" data-value="#00FF00" data-name="Zöld" data-rgb="0,255,0" style="background:#00FF00; color:#000; border:2px solid #00FF00; box-shadow:0 0 10px #00FF00; font-weight:900; padding:10px 12px; margin:2px 0; border-radius:6px; cursor:pointer; font-size:14px;">● Zöld <span style="font-size:10px; opacity:0.8;">#00FF00</span></div>
+<div class="neon-opt main-opt" data-value="#FFFF00" data-name="Sárga" data-rgb="255,255,0" style="background:#FFFF00; color:#000; border:2px solid #FFFF00; box-shadow:0 0 10px #FFFF00; font-weight:900; padding:10px 12px; margin:2px 0; border-radius:6px; cursor:pointer; font-size:14px;">● Sárga <span style="font-size:10px; opacity:0.8;">#FFFF00</span></div>
+<div class="neon-opt main-opt" data-value="#FF00FF" data-name="Magenta" data-rgb="255,0,255" style="background:#FF00FF; color:#000; border:2px solid #FF00FF; box-shadow:0 0 10px #FF00FF; font-weight:900; padding:10px 12px; margin:2px 0; border-radius:6px; cursor:pointer; font-size:14px;">● Magenta <span style="font-size:10px; opacity:0.8;">#FF00FF</span></div>
+<div class="neon-opt main-opt" data-value="#FF8C00" data-name="Narancs" data-rgb="255,140,0" style="background:#FF8C00; color:#000; border:2px solid #FF8C00; box-shadow:0 0 10px #FF8C00; font-weight:900; padding:10px 12px; margin:2px 0; border-radius:6px; cursor:pointer; font-size:14px;">● Narancs <span style="font-size:10px; opacity:0.8;">#FF8C00</span></div>
+<div class="neon-opt main-opt" data-value="#FFFFFF" data-name="Fehér" data-rgb="255,255,255" style="background:#FFFFFF; color:#000; border:2px solid #FFFFFF; box-shadow:0 0 10px #FFFFFF; font-weight:900; padding:10px 12px; margin:2px 0; border-radius:6px; cursor:pointer; font-size:14px;">● Fehér <span style="font-size:10px; opacity:0.8;">#FFFFFF</span></div>
+<div class="neon-opt sub-opt" data-value="#800080" data-name="Lila" data-rgb="128,0,128" style="background:#111; color:#800080; border:1px solid #333; border-left:4px solid #800080; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Lila <span style="font-size:10px; opacity:0.6;">#800080</span></div>
+<div class="neon-opt sub-opt" data-value="#FF69B4" data-name="Rózsaszín" data-rgb="255,105,180" style="background:#111; color:#FF69B4; border:1px solid #333; border-left:4px solid #FF69B4; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Rózsaszín <span style="font-size:10px; opacity:0.6;">#FF69B4</span></div>
+<div class="neon-opt sub-opt" data-value="#40E0D0" data-name="Türkiz" data-rgb="64,224,208" style="background:#111; color:#40E0D0; border:1px solid #333; border-left:4px solid #40E0D0; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Türkiz <span style="font-size:10px; opacity:0.6;">#40E0D0</span></div>
+<div class="neon-opt sub-opt" data-value="#32CD32" data-name="Lime" data-rgb="50,205,50" style="background:#111; color:#32CD32; border:1px solid #333; border-left:4px solid #32CD32; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Lime <span style="font-size:10px; opacity:0.6;">#32CD32</span></div>
+<div class="neon-opt sub-opt" data-value="#4B0082" data-name="Indigó" data-rgb="75,0,130" style="background:#111; color:#4B0082; border:1px solid #333; border-left:4px solid #4B0082; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Indigó <span style="font-size:10px; opacity:0.6;">#4B0082</span></div>
+<div class="neon-opt sub-opt" data-value="#FF7F50" data-name="Korall" data-rgb="255,127,80" style="background:#111; color:#FF7F50; border:1px solid #333; border-left:4px solid #FF7F50; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Korall <span style="font-size:10px; opacity:0.6;">#FF7F50</span></div>
+<div class="neon-opt sub-opt" data-value="#98FB98" data-name="Menta" data-rgb="152,251,152" style="background:#111; color:#98FB98; border:1px solid #333; border-left:4px solid #98FB98; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Menta <span style="font-size:10px; opacity:0.6;">#98FB98</span></div>
+<div class="neon-opt sub-opt" data-value="#FFD700" data-name="Arany" data-rgb="255,215,0" style="background:#111; color:#FFD700; border:1px solid #333; border-left:4px solid #FFD700; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Arany <span style="font-size:10px; opacity:0.6;">#FFD700</span></div>
+<div class="neon-opt sub-opt" data-value="#C0C0C0" data-name="Ezüst" data-rgb="192,192,192" style="background:#111; color:#C0C0C0; border:1px solid #333; border-left:4px solid #C0C0C0; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Ezüst <span style="font-size:10px; opacity:0.6;">#C0C0C0</span></div>
+<div class="neon-opt sub-opt" data-value="#800000" data-name="Bordó" data-rgb="128,0,0" style="background:#111; color:#800000; border:1px solid #333; border-left:4px solid #800000; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Bordó <span style="font-size:10px; opacity:0.6;">#800000</span></div>
+<div class="neon-opt sub-opt" data-value="#A52A2A" data-name="Barna" data-rgb="165,42,42" style="background:#111; color:#A52A2A; border:1px solid #333; border-left:4px solid #A52A2A; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Barna <span style="font-size:10px; opacity:0.6;">#A52A2A</span></div>
+<div class="neon-opt sub-opt" data-value="#808000" data-name="Olajzöld" data-rgb="128,128,0" style="background:#111; color:#808000; border:1px solid #333; border-left:4px solid #808000; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Olajzöld <span style="font-size:10px; opacity:0.6;">#808000</span></div>
+<div class="neon-opt sub-opt" data-value="#87CEEB" data-name="Égkék" data-rgb="135,206,235" style="background:#111; color:#87CEEB; border:1px solid #333; border-left:4px solid #87CEEB; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Égkék <span style="font-size:10px; opacity:0.6;">#87CEEB</span></div>
+<div class="neon-opt sub-opt" data-value="#E6E6FA" data-name="Levendula" data-rgb="230,230,250" style="background:#111; color:#E6E6FA; border:1px solid #333; border-left:4px solid #E6E6FA; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Levendula <span style="font-size:10px; opacity:0.6;">#E6E6FA</span></div>
+<div class="neon-opt sub-opt" data-value="#0F52BA" data-name="Zafír" data-rgb="15,82,186" style="background:#111; color:#0F52BA; border:1px solid #333; border-left:4px solid #0F52BA; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Zafír <span style="font-size:10px; opacity:0.6;">#0F52BA</span></div>
+<div class="neon-opt sub-opt" data-value="#39FF14" data-name="Neonzöld" data-rgb="57,255,20" style="background:#111; color:#39FF14; border:1px solid #333; border-left:4px solid #39FF14; font-weight:bold; padding:8px 12px; margin:2px 0; border-radius:4px; cursor:pointer; font-size:13px;">● Neonzöld <span style="font-size:10px; opacity:0.6;">#39FF14</span></div>
+  </div>
+</div>
+<select id="neon-color-select" style="display:none;">
+<option value="#00FFFF" selected>Cyán - #00FFFF - RGB(0,255,255)</option>
+<option value="#FF0000">Piros - #FF0000 - RGB(255,0,0)</option>
+<option value="#0000FF">Kék - #0000FF - RGB(0,0,255)</option>
+<option value="#00FF00">Zöld - #00FF00 - RGB(0,255,0)</option>
+<option value="#FFFF00">Sárga - #FFFF00 - RGB(255,255,0)</option>
+<option value="#FF00FF">Magenta - #FF00FF - RGB(255,0,255)</option>
+<option value="#FF8C00">Narancs - #FF8C00 - RGB(255,140,0)</option>
+<option value="#FFFFFF">Fehér - #FFFFFF - RGB(255,255,255)</option>
+<option value="#800080">Lila - #800080 - RGB(128,0,128)</option>
+<option value="#FF69B4">Rózsaszín - #FF69B4 - RGB(255,105,180)</option>
+<option value="#40E0D0">Türkiz - #40E0D0 - RGB(64,224,208)</option>
+<option value="#32CD32">Lime - #32CD32 - RGB(50,205,50)</option>
+<option value="#4B0082">Indigó - #4B0082 - RGB(75,0,130)</option>
+<option value="#FF7F50">Korall - #FF7F50 - RGB(255,127,80)</option>
+<option value="#98FB98">Menta - #98FB98 - RGB(152,251,152)</option>
+<option value="#FFD700">Arany - #FFD700 - RGB(255,215,0)</option>
+<option value="#C0C0C0">Ezüst - #C0C0C0 - RGB(192,192,192)</option>
+<option value="#800000">Bordó - #800000 - RGB(128,0,0)</option>
+<option value="#A52A2A">Barna - #A52A2A - RGB(165,42,42)</option>
+<option value="#808000">Olajzöld - #808000 - RGB(128,128,0)</option>
+<option value="#87CEEB">Égkék - #87CEEB - RGB(135,206,235)</option>
+<option value="#E6E6FA">Levendula - #E6E6FA - RGB(230,230,250)</option>
+<option value="#0F52BA">Zafír - #0F52BA - RGB(15,82,186)</option>
+<option value="#39FF14">Neonzöld - #39FF14 - RGB(57,255,20)</option>
+</select>
     <button id="neon-toggle-btn" class="neon-btn active" onclick="toggleNeon()">💡 NEON: BE</button>
   </div>
 </div>
@@ -187,14 +224,14 @@ body.no-neon-active .hu-header, body.no-neon-active .hu-text, body.no-neon-activ
     </div>
 
     <input id="search" placeholder="Keresés..." oninput="searchText()" style="min-width:180px; background:#000; color:#ddd; border:1px solid #333; padding:8px 12px; border-radius:4px;">
-    <button onclick="openPreciseOverlay()" style="background:linear-gradient(90deg,#0a1e3a,#1a4a8a,#0a1e3a); color:#6ab0ff; border:3px solid #2a6fd6; font-weight:bold; font-size:18px; padding:12px 22px; border-radius:8px; box-shadow:0 0 18px rgba(42,111,214,0.8); margin-left:8px; cursor:pointer; text-shadow:0 0 8px #2a6fd6;">🔵 Precíz OCR 2-es</button>
+    
     <span id="precise-counter-wrap" style="display:inline-flex; align-items:center; gap:6px; margin-left:10px; background:#000; border:2px solid #00ffff; padding:10px 16px; border-radius:8px; box-shadow:0 0 12px rgba(0,255,255,0.5);"><span style="color:#aaa; font-family:Arial; font-size:13px; font-weight:bold;">MENTVE:</span><span id="precise-save-counter" style="background:#000; color:#00ffff; font-family:Arial; font-size:22px; font-weight:bold; min-width:32px; text-align:center; text-shadow:0 0 10px #00ffff;">0</span><span style="color:#00ffff; font-family:Arial; font-size:13px; font-weight:bold;"> db</span></span>
     <span style="font-size:11px; color:#4a7abf; margin-left:6px; background:#0a1e3a; padding:5px 10px; border-radius:4px; border:1px solid #2a6fd6;">🟠 Narancs EN | 🟡 Citrom HU</span>
-    <button onclick="openPreciseOverlay()" style="background:linear-gradient(90deg,#0a1e3a,#143a6b); color:#6ab0ff; border:2px solid #2a6fd6; font-weight:bold; box-shadow:0 0 12px rgba(42,111,214,0.6); margin-left:6px;">🔵 Precíz OCR 2-es</button>
+    
     <span style="font-size:10px; color:#4a7abf; margin-left:4px;">🟠 Narancs EN | 🟡 Citrom HU</span> 
 </div>
 
-<div id="dark-blue-submenu-bar"><span class="db-title">🔵 SÖTÉTKÉK ALMENÜ</span><button class="db-btn" onclick="openPreciseOverlay()">🟦 Precíz OCR - MENTÉS GOMBOKKAL</button><button class="db-btn" onclick="openPreciseOverlayFullscreen()">⛶ Teljes képernyő</button><button class="db-btn" id="clipToNoteBtn" onclick="pasteClipboardToNote()">📋 Vágólap → Jegyzet (zöld)</button>
+<div id="dark-blue-submenu-bar"><span class="db-title">🔵 SÖTÉTKÉK ALMENÜ</span><button class="db-btn" onclick="openPreciseOverlayFullscreen()">⛶ Teljes képernyő</button><button class="db-btn" id="clipToNoteBtn" onclick="pasteClipboardToNote()">📋 Vágólap → Jegyzet (zöld)</button>
 <style>#clipToNoteBtn{background:#0f2a12 !important;color:#00ff00 !important;border:1px solid #00ff00 !important;box-shadow:0 0 10px rgba(0,255,0,0.5) !important;}
 #clipToNoteBtn:hover{background:#153d18 !important;color:#66ff66 !important;box-shadow:0 0 16px rgba(0,255,0,0.8) !important;}</style><span style="font-size:11px; color:#4a7abf; margin-left:10px;">🟠 Narancs = EN mentés | 🟡 Citrom = HU mentés</span></div>
 <script>
@@ -1382,6 +1419,72 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }, 400);
   });
 })();
+</script>
+
+
+<div id="galeria-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:5000; flex-direction:column; overflow:hidden;">
+  <div style="background:#111; padding:10px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #0f0; flex-shrink:0;">
+    <span style="font-family:Orbitron,sans-serif; font-weight:bold; color:#0f0;">🖼️ GALÉRIA - KÜLÖN MENÜ</span>
+    <button onclick="closeGaleriaMenu()" style="background:#ff0000; color:#fff; border:none; padding:6px 14px; font-weight:bold; border-radius:6px; cursor:pointer;">✕ Bezár</button>
+  </div>
+  <iframe src="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9Imh1Ij4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCxpbml0aWFsLXNjYWxlPTEiPgo8dGl0bGU+S8OpcGdhbMOpcmlhIE7DqXrFkSAtIFVuaXZlcnNhbCBWaWV3ZXI8L3RpdGxlPgo8c3R5bGU+Cip7Ym94LXNpemluZzpib3JkZXItYm94fQpib2R5e2JhY2tncm91bmQ6IzAwMDtjb2xvcjojMGYwO2ZvbnQtZmFtaWx5OkFyaWFsLHNhbnMtc2VyaWY7bWFyZ2luOjA7cGFkZGluZzoxNnB4O21pbi1oZWlnaHQ6MTAwdmh9Cmgxe2NvbG9yOiMwZjA7Zm9udC1zaXplOjIycHg7bWFyZ2luOjB9Ci50b3BiYXJ7ZGlzcGxheTpmbGV4O2p1c3RpZnktY29udGVudDpzcGFjZS1iZXR3ZWVuO2FsaWduLWl0ZW1zOmNlbnRlcjtmbGV4LXdyYXA6d3JhcDtnYXA6MTBweDtib3JkZXItYm90dG9tOjJweCBzb2xpZCAjMGYwO3BhZGRpbmctYm90dG9tOjE0cHg7bWFyZ2luLWJvdHRvbToxNnB4fQoudG9wLWFjdGlvbnN7ZGlzcGxheTpmbGV4O2dhcDo4cHg7ZmxleC13cmFwOndyYXA7YWxpZ24taXRlbXM6Y2VudGVyfQouYnRue2JhY2tncm91bmQ6IzBmMDtjb2xvcjojMDAwO2JvcmRlcjpub25lO2JvcmRlci1yYWRpdXM6OTk5cHg7cGFkZGluZzo4cHggMTRweDtmb250LXdlaWdodDo4MDA7Y3Vyc29yOnBvaW50ZXI7Zm9udC1zaXplOjEzcHh9Ci5idG46aG92ZXJ7YmFja2dyb3VuZDojMDBmZjg4fQouYnRuMntiYWNrZ3JvdW5kOiMxMTE7Ym9yZGVyOjFweCBzb2xpZCAjMGYwO2NvbG9yOiMwZjA7Ym9yZGVyLXJhZGl1czo5OTlweDtwYWRkaW5nOjhweCAxNHB4O2ZvbnQtd2VpZ2h0OjcwMDtjdXJzb3I6cG9pbnRlcjtmb250LXNpemU6MTNweH0KLmJ0bjI6aG92ZXJ7YmFja2dyb3VuZDojMGYwMn0KLmJ0bjN7YmFja2dyb3VuZDojMTExO2JvcmRlcjoxcHggc29saWQgI2ZmMDtjb2xvcjojZmYwO2JvcmRlci1yYWRpdXM6OTk5cHg7cGFkZGluZzo4cHggMTRweDtmb250LXdlaWdodDo3MDA7Y3Vyc29yOnBvaW50ZXI7Zm9udC1zaXplOjEzcHh9Ci5idG4zOmhvdmVye2JhY2tncm91bmQ6I2ZmMDN9CiNmaWxlSW5wdXR7ZGlzcGxheTpub25lfQoKLmRyb3B6b25le2JvcmRlcjozcHggZGFzaGVkICMwZjA7Ym9yZGVyLXJhZGl1czoxNnB4O3BhZGRpbmc6NjBweCAyMHB4O3RleHQtYWxpZ246Y2VudGVyO21hcmdpbi10b3A6NDBweDt0cmFuc2l0aW9uOi4ycztjdXJzb3I6cG9pbnRlcn0KLmRyb3B6b25lLmRyYWd7YmFja2dyb3VuZDojMGYwMjtib3JkZXItY29sb3I6IzAwZmY4OH0KLmRyb3B6b25lIGgye2NvbG9yOiMwZjA7bWFyZ2luOjAgMCAxMHB4fQouZHJvcHpvbmUgcHtjb2xvcjojOGY4O2ZvbnQtc2l6ZToxM3B4O21hcmdpbjo2cHggMH0KCi5ncmlke2Rpc3BsYXk6Z3JpZDtncmlkLXRlbXBsYXRlLWNvbHVtbnM6cmVwZWF0KGF1dG8tZmlsbCxtaW5tYXgoMjgwcHgsMWZyKSk7Z2FwOjE0cHg7bWFyZ2luLXRvcDo2cHh9Ci5jYXJke2JhY2tncm91bmQ6IzExMTtib3JkZXI6MXB4IHNvbGlkICMzMzM7Ym9yZGVyLXJhZGl1czoxMnB4O3BhZGRpbmc6MTBweH0KLmNhcmQgLmNhcHtmb250LXNpemU6MTJweDtjb2xvcjojMGYwO21hcmdpbi1ib3R0b206NnB4O3doaXRlLXNwYWNlOm5vd3JhcDtvdmVyZmxvdzpoaWRkZW47dGV4dC1vdmVyZmxvdzplbGxpcHNpc30KLmNhcmQgLnNyYy10YWd7Zm9udC1zaXplOjEwcHg7Y29sb3I6IzY2NjttYXJnaW4tYm90dG9tOjRweH0KLmNhcmQgaW1ne3dpZHRoOjEwMCU7Ym9yZGVyLXJhZGl1czoxMHB4O2JvcmRlcjoycHggc29saWQgIzBmMDtjdXJzb3I6cG9pbnRlcjtkaXNwbGF5OmJsb2NrfQouY2FyZCBpbWc6aG92ZXJ7Ym9yZGVyLWNvbG9yOiMwMGZmODh9Ci5jYXJkIC5hY3Rpb25ze2Rpc3BsYXk6ZmxleDtqdXN0aWZ5LWNvbnRlbnQ6c3BhY2UtYmV0d2VlbjttYXJnaW4tdG9wOjhweDtmb250LXNpemU6MTNweH0KYXtjb2xvcjojMGYwO3RleHQtZGVjb3JhdGlvbjp1bmRlcmxpbmU7Y3Vyc29yOnBvaW50ZXJ9CmE6aG92ZXJ7Y29sb3I6IzAwZmY4OH0KCiNsYntkaXNwbGF5Om5vbmU7cG9zaXRpb246Zml4ZWQ7aW5zZXQ6MDtiYWNrZ3JvdW5kOnJnYmEoMCwwLDAsMC45NSk7ei1pbmRleDo5OTk5O2FsaWduLWl0ZW1zOmNlbnRlcjtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyO2ZsZXgtZGlyZWN0aW9uOmNvbHVtbjtwYWRkaW5nOjIwcHh9CiNsYi5vbntkaXNwbGF5OmZsZXh9CiNsYlN0YWdle3Bvc2l0aW9uOnJlbGF0aXZlO21heC13aWR0aDo5NHZ3O21heC1oZWlnaHQ6NzZ2aDtvdmVyZmxvdzpoaWRkZW47ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyO2N1cnNvcjpncmFifQojbGJTdGFnZS5ncmFiYmluZ3tjdXJzb3I6Z3JhYmJpbmd9CiNsYiBpbWd7bWF4LXdpZHRoOjk0dnc7bWF4LWhlaWdodDo3NnZoO2JvcmRlcjozcHggc29saWQgIzBmMDtib3JkZXItcmFkaXVzOjEycHg7Ym94LXNoYWRvdzowIDAgMzBweCAjMGYwYTt0cmFuc2l0aW9uOnRyYW5zZm9ybSAuMDVzIGxpbmVhcjt1c2VyLXNlbGVjdDpub25lOy13ZWJraXQtdXNlci1kcmFnOm5vbmV9Ci5sYi14e3Bvc2l0aW9uOmFic29sdXRlO3RvcDoxNHB4O3JpZ2h0OjE4cHg7YmFja2dyb3VuZDojZmYwMDAwO2NvbG9yOiNmZmY7Ym9yZGVyOm5vbmU7Ym9yZGVyLXJhZGl1czo1MCU7d2lkdGg6NDJweDtoZWlnaHQ6NDJweDtmb250LXNpemU6MjJweDtmb250LXdlaWdodDo4MDA7Y3Vyc29yOnBvaW50ZXJ9Ci5sYi1ue3Bvc2l0aW9uOmFic29sdXRlO3RvcDo1MCU7dHJhbnNmb3JtOnRyYW5zbGF0ZVkoLTUwJSk7YmFja2dyb3VuZDpyZ2JhKDAsMjU1LDAsMC4xNSk7Ym9yZGVyOjJweCBzb2xpZCAjMGYwO2NvbG9yOiMwZjA7d2lkdGg6NDhweDtoZWlnaHQ6NDhweDtib3JkZXItcmFkaXVzOjUwJTtmb250LXNpemU6MjZweDtjdXJzb3I6cG9pbnRlcjt6LWluZGV4OjJ9Ci5sYi1we2xlZnQ6MTRweH0gLmxiLW54e3JpZ2h0OjE0cHh9Ci5sYi1iYXJ7bWFyZ2luLXRvcDoxNHB4O2Rpc3BsYXk6ZmxleDtnYXA6MTBweDthbGlnbi1pdGVtczpjZW50ZXI7ZmxleC13cmFwOndyYXA7anVzdGlmeS1jb250ZW50OmNlbnRlcn0KLmxiLWluZm97bWFyZ2luLXRvcDo4cHg7Y29sb3I6IzBmMDtmb250LXNpemU6MTNweDt0ZXh0LWFsaWduOmNlbnRlcn0KLmxiLXpvb20taGludHtjb2xvcjojNmY2O2ZvbnQtc2l6ZToxMXB4O21hcmdpbi10b3A6NHB4O3RleHQtYWxpZ246Y2VudGVyfQo8L3N0eWxlPgo8L2hlYWQ+Cjxib2R5PgoKPGRpdiBjbGFzcz0idG9wYmFyIj4KICA8aDEgaWQ9InBhZ2VUaXRsZSI+8J+TgSBLw6lwZ2Fsw6lyaWEgTsOpesWRPC9oMT4KICA8ZGl2IGNsYXNzPSJ0b3AtYWN0aW9ucyI+CiAgICA8YnV0dG9uIGNsYXNzPSJidG4yIiBpZD0ibG9hZE1vcmVCdG4iIHN0eWxlPSJkaXNwbGF5Om5vbmUiPuKelSBUw7ZiYiBleHBvcnQgYmV0w7ZsdMOpc2U8L2J1dHRvbj4KICAgIDxidXR0b24gY2xhc3M9ImJ0biIgaWQ9ImZpcnN0QnRuIiBzdHlsZT0iZGlzcGxheTpub25lIj7wn5SNIEVsc8WRIG1lZ255aXTDoXNhPC9idXR0b24+CiAgICA8YnV0dG9uIGNsYXNzPSJidG4zIiBpZD0icmVzZXRCdG4iIHN0eWxlPSJkaXNwbGF5Om5vbmUiPvCfl5HvuI8gVMO2cmzDqXMgLyDDmmo8L2J1dHRvbj4KICA8L2Rpdj4KPC9kaXY+Cgo8aW5wdXQgdHlwZT0iZmlsZSIgaWQ9ImZpbGVJbnB1dCIgYWNjZXB0PSIuaHRtbCwuaHRtIiBtdWx0aXBsZT4KCjxkaXYgY2xhc3M9ImRyb3B6b25lIiBpZD0iZHJvcHpvbmUiPgogIDxoMj7irIfvuI8gSMO6emQgaWRlIGEgIkvDqXB0w6Fyb2zDsyBFeHBvcnQiIEhUTUwgZsOhamwob2thKXQ8L2gyPgogIDxwPi4uLnZhZ3kga2F0dGludHMgaWRlIGbDoWpsIGtpdsOhbGFzenTDoXPDoWhvejwvcD4KICA8cCBzdHlsZT0iY29sb3I6IzZhNiI+VMO2YmIgZsOhamx0IGlzIGJldMO2bHRoZXRzeiBlZ3lzemVycmUg4oCUIG1pbmRlZ3lpayBrw6lwZWkgZWd5ZXRsZW4ga8O2esO2cyBnYWzDqXJpw6FiYSBrZXLDvGxuZWsuPC9wPgo8L2Rpdj4KCjxkaXYgY2xhc3M9ImdyaWQiIGlkPSJncmlkIj48L2Rpdj4KCjxkaXYgaWQ9ImxiIj4KICA8YnV0dG9uIGNsYXNzPSJsYi14IiBvbmNsaWNrPSJjbG9zZUxCKCkiPuKclTwvYnV0dG9uPgogIDxidXR0b24gY2xhc3M9ImxiLW4gbGItcCIgb25jbGljaz0ibmF2TEIoLTEpIj7igLk8L2J1dHRvbj4KICA8YnV0dG9uIGNsYXNzPSJsYi1uIGxiLW54IiBvbmNsaWNrPSJuYXZMQigxKSI+4oC6PC9idXR0b24+CiAgPGRpdiBpZD0ibGJTdGFnZSI+CiAgICA8aW1nIGlkPSJsYkltZyIgc3JjPSIiIGFsdD0iIj4KICA8L2Rpdj4KICA8ZGl2IGNsYXNzPSJsYi1iYXIiPgogICAgPGEgY2xhc3M9ImJ0bjIiIGlkPSJsYkRsIiBkb3dubG9hZD7irIfvuI8gTGV0w7ZsdMOpczwvYT4KICAgIDxidXR0b24gY2xhc3M9ImJ0bjIiIG9uY2xpY2s9Inpvb21CeSgxLjI1KSI+8J+UjSsgTmFnecOtdDwvYnV0dG9uPgogICAgPGJ1dHRvbiBjbGFzcz0iYnRuMiIgb25jbGljaz0iem9vbUJ5KDAuOCkiPvCflI0tIEtpY3NpbnnDrXQ8L2J1dHRvbj4KICAgIDxidXR0b24gY2xhc3M9ImJ0bjIiIG9uY2xpY2s9InJlc2V0Wm9vbSgpIj7ihrogQWxhcMOhbGzDoXM8L2J1dHRvbj4KICA8L2Rpdj4KICA8ZGl2IGNsYXNzPSJsYi1pbmZvIiBpZD0ibGJJbmZvIj48L2Rpdj4KICA8ZGl2IGNsYXNzPSJsYi16b29tLWhpbnQiPkVnw6lyZ8O2cmfFkSA9IHpvb20g4oCiIE5hZ3nDrXTDoXNuw6FsIGjDunp2YSBtb3pnYXRoYXTDsyDigKIg4oaQIOKGkiBueWlsYWsgPSBlbMWResWRL2vDtnZldGtlesWRIOKAoiBFc2MgPSBiZXrDoXI8L2Rpdj4KPC9kaXY+Cgo8c2NyaXB0PgpsZXQgTCA9IFtdOyAgICAgIC8vIHsgZDogZGF0YVVSSSwgbjogbmFtZSwgczogc2l6ZVN0cihvcHRpb25hbCksIHcsIGgsIGM6IGNvbG9ySGV4LCBzcmM6IHNvdXJjZUZpbGVOYW1lIH0KbGV0IGN1ciA9IDA7CmxldCB6b29tID0gMSwgcGFuWCA9IDAsIHBhblkgPSAwLCBkcmFnZ2luZyA9IGZhbHNlLCBkcmFnU3RhcnRYID0gMCwgZHJhZ1N0YXJ0WSA9IDAsIHBhblN0YXJ0WCA9IDAsIHBhblN0YXJ0WSA9IDA7Cgpjb25zdCBJREJfTkFNRSA9ICdrZXBnYWxlcmlhX3ZpZXdlcl9kYicsIElEQl9TVE9SRSA9ICdzdGF0ZSc7CmZ1bmN0aW9uIG9wZW5JZGIoKSB7CiAgcmV0dXJuIG5ldyBQcm9taXNlKChyZXNvbHZlLCByZWplY3QpID0+IHsKICAgIGxldCByZXEgPSBpbmRleGVkREIub3BlbihJREJfTkFNRSwgMSk7CiAgICByZXEub251cGdyYWRlbmVlZGVkID0gKCkgPT4geyBsZXQgZGIgPSByZXEucmVzdWx0OyBpZiAoIWRiLm9iamVjdFN0b3JlTmFtZXMuY29udGFpbnMoSURCX1NUT1JFKSkgZGIuY3JlYXRlT2JqZWN0U3RvcmUoSURCX1NUT1JFKTsgfTsKICAgIHJlcS5vbnN1Y2Nlc3MgPSAoKSA9PiByZXNvbHZlKHJlcS5yZXN1bHQpOwogICAgcmVxLm9uZXJyb3IgPSAoKSA9PiByZWplY3QocmVxLmVycm9yKTsKICB9KTsKfQphc3luYyBmdW5jdGlvbiBzYXZlU3RhdGUoKSB7CiAgdHJ5IHsKICAgIGxldCBkYiA9IGF3YWl0IG9wZW5JZGIoKTsKICAgIGF3YWl0IG5ldyBQcm9taXNlKChyZXNvbHZlLCByZWplY3QpID0+IHsKICAgICAgbGV0IHR4ID0gZGIudHJhbnNhY3Rpb24oSURCX1NUT1JFLCAncmVhZHdyaXRlJyk7CiAgICAgIHR4Lm9iamVjdFN0b3JlKElEQl9TVE9SRSkucHV0KEwsICdnYWxsZXJ5Jyk7CiAgICAgIHR4Lm9uY29tcGxldGUgPSByZXNvbHZlOwogICAgICB0eC5vbmVycm9yID0gKCkgPT4gcmVqZWN0KHR4LmVycm9yKTsKICAgIH0pOwogIH0gY2F0Y2ggKGUpIHsgY29uc29sZS53YXJuKCdNZW50w6lzIHNpa2VydGVsZW46JywgZSk7IH0KfQphc3luYyBmdW5jdGlvbiBsb2FkU3RhdGUoKSB7CiAgdHJ5IHsKICAgIGxldCBkYiA9IGF3YWl0IG9wZW5JZGIoKTsKICAgIHJldHVybiBhd2FpdCBuZXcgUHJvbWlzZSgocmVzb2x2ZSkgPT4gewogICAgICBsZXQgdHggPSBkYi50cmFuc2FjdGlvbihJREJfU1RPUkUsICdyZWFkb25seScpOwogICAgICBsZXQgcnEgPSB0eC5vYmplY3RTdG9yZShJREJfU1RPUkUpLmdldCgnZ2FsbGVyeScpOwogICAgICBycS5vbnN1Y2Nlc3MgPSAoKSA9PiByZXNvbHZlKHJxLnJlc3VsdCB8fCBbXSk7CiAgICAgIHJxLm9uZXJyb3IgPSAoKSA9PiByZXNvbHZlKFtdKTsKICAgIH0pOwogIH0gY2F0Y2ggKGUpIHsgcmV0dXJuIFtdOyB9Cn0KYXN5bmMgZnVuY3Rpb24gY2xlYXJTdGF0ZSgpIHsKICB0cnkgewogICAgbGV0IGRiID0gYXdhaXQgb3BlbklkYigpOwogICAgYXdhaXQgbmV3IFByb21pc2UoKHJlc29sdmUpID0+IHsKICAgICAgbGV0IHR4ID0gZGIudHJhbnNhY3Rpb24oSURCX1NUT1JFLCAncmVhZHdyaXRlJyk7CiAgICAgIHR4Lm9iamVjdFN0b3JlKElEQl9TVE9SRSkuZGVsZXRlKCdnYWxsZXJ5Jyk7CiAgICAgIHR4Lm9uY29tcGxldGUgPSByZXNvbHZlOwogICAgfSk7CiAgfSBjYXRjaCAoZSkge30KfQoKY29uc3QgZ3JpZCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdncmlkJyk7CmNvbnN0IGRyb3B6b25lID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2Ryb3B6b25lJyk7CmNvbnN0IGZpbGVJbnB1dCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmaWxlSW5wdXQnKTsKCmZ1bmN0aW9uIGZtdEtiKGRhdGFVcmksIHNpemVTdHIpIHsKICBpZiAoc2l6ZVN0ciAmJiAhL25hbi9pLnRlc3Qoc2l6ZVN0cikpIHJldHVybiBzaXplU3RyOwogIGlmICghZGF0YVVyaSkgcmV0dXJuICc/IGtCJzsKICBsZXQgYXBwcm94Qnl0ZXMgPSAoZGF0YVVyaS5sZW5ndGggKiAzIC8gNCk7CiAgcmV0dXJuIChhcHByb3hCeXRlcyAvIDEwMjQpLnRvRml4ZWQoMSkgKyAnIGtCJzsKfQoKZnVuY3Rpb24gZXh0cmFjdEZyb21IdG1sKHRleHQsIHNvdXJjZU5hbWUpIHsKICAvLyBmaW5kIHRoZSBlbWJlZGRlZCBkYXRhIGFycmF5LCBlLmcuICJsZXQgTD1bLi4uXSIgb3IgInZhciBMPVsuLi5dIiBvciAiTD1bLi4uXSIgaW5zaWRlIHRoZSBleHBvcnRlcidzIG93biBzY3JpcHQKICBsZXQgbSA9IHRleHQubWF0Y2goLyg/OnZhcnxsZXR8Y29uc3QpXHMrTFxzKj1ccyooXFtbXHNcU10qP1xdKTsvKTsKICBpZiAoIW0pIHsKICAgIC8vIGZhbGxiYWNrOiB0cnkgdG8gZmluZCBhbnkgYXJyYXkgbGl0ZXJhbCBjb250YWluaW5nICJkYXRhOmltYWdlIgogICAgbGV0IGlkeCA9IHRleHQuaW5kZXhPZignZGF0YTppbWFnZScpOwogICAgaWYgKGlkeCA9PT0gLTEpIHJldHVybiBbXTsKICAgIGxldCBzdGFydCA9IHRleHQubGFzdEluZGV4T2YoJ1snLCBpZHgpOwogICAgbGV0IGVuZCA9IHRleHQuaW5kZXhPZignKTsnLCBpZHgpOwogICAgaWYgKHN0YXJ0ID09PSAtMSB8fCBlbmQgPT09IC0xKSByZXR1cm4gW107CiAgICBtID0gW251bGwsIHRleHQuc2xpY2Uoc3RhcnQsIHRleHQubGFzdEluZGV4T2YoJ10nLCBlbmQpICsgMSldOwogIH0KICB0cnkgewogICAgbGV0IGFyciA9IEpTT04ucGFyc2UobVsxXSk7CiAgICByZXR1cm4gYXJyLm1hcChvID0+ICh7CiAgICAgIGQ6IG8uZCB8fCBvLnNyYyB8fCBvLmRhdGFVcmwgfHwgJycsCiAgICAgIG46IG8ubiB8fCBvLm5hbWUgfHwgJ2vDqXAuanBnJywKICAgICAgczogby5zIHx8IG8uc2l6ZSB8fCBudWxsLAogICAgICB3OiBvLncgfHwgby53aWR0aCB8fCBudWxsLAogICAgICBoOiBvLmggfHwgby5oZWlnaHQgfHwgbnVsbCwKICAgICAgYzogby5jIHx8IG8uY29sb3IgfHwgJyMwZjAnLAogICAgICBzcmM6IHNvdXJjZU5hbWUKICAgIH0pKS5maWx0ZXIoeCA9PiB4LmQpOwogIH0gY2F0Y2ggKGUpIHsKICAgIGNvbnNvbGUuZXJyb3IoJ1BhcnNlIGVycm9yIGZvcicsIHNvdXJjZU5hbWUsIGUpOwogICAgcmV0dXJuIFtdOwogIH0KfQoKZnVuY3Rpb24gaGFuZGxlRmlsZXMoZmlsZUxpc3QpIHsKICBsZXQgZmlsZXMgPSBBcnJheS5mcm9tKGZpbGVMaXN0KS5maWx0ZXIoZiA9PiAvXC5odG1sPyQvaS50ZXN0KGYubmFtZSkpOwogIGlmIChmaWxlcy5sZW5ndGggPT09IDApIHsgYWxlcnQoJ0NzYWsgLmh0bWwgLyAuaHRtIGbDoWpsb2thdCBsZWhldCBiZXTDtmx0ZW5pLicpOyByZXR1cm47IH0KICBsZXQgcGVuZGluZyA9IGZpbGVzLmxlbmd0aDsKICBmaWxlcy5mb3JFYWNoKGYgPT4gewogICAgbGV0IHIgPSBuZXcgRmlsZVJlYWRlcigpOwogICAgci5vbmxvYWQgPSBlID0+IHsKICAgICAgbGV0IGl0ZW1zID0gZXh0cmFjdEZyb21IdG1sKGUudGFyZ2V0LnJlc3VsdCwgZi5uYW1lKTsKICAgICAgaWYgKGl0ZW1zLmxlbmd0aCA9PT0gMCkgewogICAgICAgIGFsZXJ0KCfimqDvuI8gIicgKyBmLm5hbWUgKyAnIiBmw6FqbGJhbiBuZW0gdGFsw6FsdGFtIGJlw6FneWF6b3R0IGvDqXBla2V0IChuZW0gIkvDqXB0w6Fyb2zDsyBFeHBvcnQiIGZvcm3DoXR1bT8pLicpOwogICAgICB9CiAgICAgIEwgPSBMLmNvbmNhdChpdGVtcyk7CiAgICAgIHBlbmRpbmctLTsKICAgICAgaWYgKHBlbmRpbmcgPT09IDApIHsgcmVuZGVyKCk7IHNhdmVTdGF0ZSgpOyB9CiAgICB9OwogICAgci5vbmVycm9yID0gKCkgPT4geyBwZW5kaW5nLS07IGlmIChwZW5kaW5nID09PSAwKSB7IHJlbmRlcigpOyBzYXZlU3RhdGUoKTsgfSB9OwogICAgci5yZWFkQXNUZXh0KGYpOwogIH0pOwp9CgpmaWxlSW5wdXQuYWRkRXZlbnRMaXN0ZW5lcignY2hhbmdlJywgZSA9PiBoYW5kbGVGaWxlcyhlLnRhcmdldC5maWxlcykpOwpkcm9wem9uZS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsICgpID0+IGZpbGVJbnB1dC5jbGljaygpKTsKZHJvcHpvbmUuYWRkRXZlbnRMaXN0ZW5lcignZHJhZ292ZXInLCBlID0+IHsgZS5wcmV2ZW50RGVmYXVsdCgpOyBkcm9wem9uZS5jbGFzc0xpc3QuYWRkKCdkcmFnJyk7IH0pOwpkcm9wem9uZS5hZGRFdmVudExpc3RlbmVyKCdkcmFnbGVhdmUnLCAoKSA9PiBkcm9wem9uZS5jbGFzc0xpc3QucmVtb3ZlKCdkcmFnJykpOwpkcm9wem9uZS5hZGRFdmVudExpc3RlbmVyKCdkcm9wJywgZSA9PiB7CiAgZS5wcmV2ZW50RGVmYXVsdCgpOwogIGRyb3B6b25lLmNsYXNzTGlzdC5yZW1vdmUoJ2RyYWcnKTsKICBoYW5kbGVGaWxlcyhlLmRhdGFUcmFuc2Zlci5maWxlcyk7Cn0pOwpkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbG9hZE1vcmVCdG4nKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsICgpID0+IGZpbGVJbnB1dC5jbGljaygpKTsKZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Jlc2V0QnRuJykuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCAoKSA9PiB7CiAgaWYgKGNvbmZpcm0oJ1TDtnJsw7ZkIGF6IMO2c3N6ZXMgYmV0w7ZsdMO2dHQga8OpcGV0IGEgZ2Fsw6lyacOhYsOzbD8nKSkgeyBMID0gW107IHJlbmRlcigpOyBjbGVhclN0YXRlKCk7IH0KfSk7CmRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmaXJzdEJ0bicpLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgKCkgPT4geyBpZiAoTC5sZW5ndGgpIG9wZW5MQigwKTsgfSk7CgpmdW5jdGlvbiByZW5kZXIoKSB7CiAgZ3JpZC5pbm5lckhUTUwgPSAnJzsKICBsZXQgdG90YWxCeXRlcyA9IDA7CiAgTC5mb3JFYWNoKChvLCBpKSA9PiB7CiAgICBsZXQga2IgPSBmbXRLYihvLmQsIG8ucyk7CiAgICB0b3RhbEJ5dGVzICs9IHBhcnNlRmxvYXQoa2IpICogMTAyNCB8fCAwOwogICAgbGV0IGNhcmQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdkaXYnKTsKICAgIGNhcmQuY2xhc3NOYW1lID0gJ2NhcmQnOwogICAgbGV0IGRpbSA9IChvLncgJiYgby5oKSA/IChvLncgKyAneCcgKyBvLmggKyAnIOKAoiAnKSA6ICcnOwogICAgbGV0IHNyY1RhZyA9IChuZXcgU2V0KEwubWFwKHggPT4geC5zcmMpKSkuc2l6ZSA+IDEgPyAoJzxkaXYgY2xhc3M9InNyYy10YWciPvCfk4QgJyArIG8uc3JjICsgJzwvZGl2PicpIDogJyc7CiAgICBjYXJkLmlubmVySFRNTCA9CiAgICAgIHNyY1RhZyArCiAgICAgICc8ZGl2IGNsYXNzPSJjYXAiPicgKyBvLm4gKyAnICgnICsgZGltICsga2IgKyAnIC0gJyArIG8uYyArICcpPC9kaXY+JyArCiAgICAgICc8aW1nIHNyYz0iJyArIG8uZCArICciIGxvYWRpbmc9ImxhenkiIGRhdGEtaWR4PSInICsgaSArICciPicgKwogICAgICAnPGRpdiBjbGFzcz0iYWN0aW9ucyI+JyArCiAgICAgICAgJzxhIGRhdGEtZGw9IicgKyBpICsgJyI+TGV0w7ZsdMOpczwvYT4nICsKICAgICAgICAnPGEgZGF0YS1vcGVuPSInICsgaSArICciPvCflI0gTWVnbnlpdMOhczwvYT4nICsKICAgICAgJzwvZGl2Pic7CiAgICBncmlkLmFwcGVuZENoaWxkKGNhcmQpOwogIH0pOwogIGdyaWQucXVlcnlTZWxlY3RvckFsbCgnaW1nW2RhdGEtaWR4XScpLmZvckVhY2goaW1nID0+IHsKICAgIGltZy5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsICgpID0+IG9wZW5MQihwYXJzZUludChpbWcuZGF0YXNldC5pZHgsIDEwKSkpOwogIH0pOwogIGdyaWQucXVlcnlTZWxlY3RvckFsbCgnYVtkYXRhLW9wZW5dJykuZm9yRWFjaChhID0+IHsKICAgIGEuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCAoKSA9PiBvcGVuTEIocGFyc2VJbnQoYS5kYXRhc2V0Lm9wZW4sIDEwKSkpOwogIH0pOwogIGdyaWQucXVlcnlTZWxlY3RvckFsbCgnYVtkYXRhLWRsXScpLmZvckVhY2goYSA9PiB7CiAgICBhLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgKCkgPT4gewogICAgICBsZXQgbyA9IExbcGFyc2VJbnQoYS5kYXRhc2V0LmRsLCAxMCldOwogICAgICBsZXQgbGluayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2EnKTsKICAgICAgbGluay5ocmVmID0gby5kOyBsaW5rLmRvd25sb2FkID0gby5uOwogICAgICBkb2N1bWVudC5ib2R5LmFwcGVuZENoaWxkKGxpbmspOyBsaW5rLmNsaWNrKCk7IGxpbmsucmVtb3ZlKCk7CiAgICB9KTsKICB9KTsKCiAgbGV0IGNvdW50ID0gTC5sZW5ndGg7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3BhZ2VUaXRsZScpLnRleHRDb250ZW50ID0KICAgIGNvdW50ID4gMCA/ICgn8J+TgSBLw6lwZ2Fsw6lyaWEgLSAnICsgY291bnQgKyAnIGRiIC0gJyArICh0b3RhbEJ5dGVzIC8gMTAyNCAvIDEwMjQpLnRvRml4ZWQoMikgKyAnIE1CJykgOiAn8J+TgSBLw6lwZ2Fsw6lyaWEgTsOpesWRJzsKICBkcm9wem9uZS5zdHlsZS5kaXNwbGF5ID0gY291bnQgPiAwID8gJ25vbmUnIDogJ2Jsb2NrJzsKICBncmlkLnN0eWxlLmRpc3BsYXkgPSBjb3VudCA+IDAgPyAnZ3JpZCcgOiAnbm9uZSc7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xvYWRNb3JlQnRuJykuc3R5bGUuZGlzcGxheSA9IGNvdW50ID4gMCA/ICdpbmxpbmUtYmxvY2snIDogJ25vbmUnOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmaXJzdEJ0bicpLnN0eWxlLmRpc3BsYXkgPSBjb3VudCA+IDAgPyAnaW5saW5lLWJsb2NrJyA6ICdub25lJzsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmVzZXRCdG4nKS5zdHlsZS5kaXNwbGF5ID0gY291bnQgPiAwID8gJ2lubGluZS1ibG9jaycgOiAnbm9uZSc7Cn0KCmZ1bmN0aW9uIG9wZW5MQihpKSB7CiAgY3VyID0gaTsKICBsZXQgbyA9IExbaV07CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xiSW1nJykuc3JjID0gby5kOwogIGxldCBhID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xiRGwnKTsKICBhLmhyZWYgPSBvLmQ7IGEuZG93bmxvYWQgPSBvLm47CiAgbGV0IGtiID0gZm10S2Ioby5kLCBvLnMpOwogIGxldCBkaW0gPSAoby53ICYmIG8uaCkgPyAoby53ICsgJ3gnICsgby5oICsgJyDigKIgJykgOiAnJzsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGJJbmZvJykudGV4dENvbnRlbnQgPSAoaSArIDEpICsgJy8nICsgTC5sZW5ndGggKyAnIC0gJyArIG8ubiArICcgLSAnICsgZGltICsga2IgKyAnIC0gJyArIG8uYyArIChvLnNyYyA/ICgnIC0g8J+ThCAnICsgby5zcmMpIDogJycpOwogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsYicpLmNsYXNzTGlzdC5hZGQoJ29uJyk7CiAgZG9jdW1lbnQuYm9keS5zdHlsZS5vdmVyZmxvdyA9ICdoaWRkZW4nOwogIHJlc2V0Wm9vbSgpOwp9CmZ1bmN0aW9uIGNsb3NlTEIoKSB7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xiJykuY2xhc3NMaXN0LnJlbW92ZSgnb24nKTsKICBkb2N1bWVudC5ib2R5LnN0eWxlLm92ZXJmbG93ID0gJyc7Cn0KZnVuY3Rpb24gbmF2TEIoZCkgewogIGxldCBuID0gY3VyICsgZDsKICBpZiAobiA8IDApIG4gPSBMLmxlbmd0aCAtIDE7CiAgaWYgKG4gPj0gTC5sZW5ndGgpIG4gPSAwOwogIG9wZW5MQihuKTsKfQoKZnVuY3Rpb24gYXBwbHlUcmFuc2Zvcm0oKSB7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xiSW1nJykuc3R5bGUudHJhbnNmb3JtID0gJ3RyYW5zbGF0ZSgnICsgcGFuWCArICdweCwnICsgcGFuWSArICdweCkgc2NhbGUoJyArIHpvb20gKyAnKSc7Cn0KZnVuY3Rpb24gem9vbUJ5KGYpIHsKICB6b29tID0gTWF0aC5taW4oOCwgTWF0aC5tYXgoMSwgem9vbSAqIGYpKTsKICBpZiAoem9vbSA9PT0gMSkgeyBwYW5YID0gMDsgcGFuWSA9IDA7IH0KICBhcHBseVRyYW5zZm9ybSgpOwp9CmZ1bmN0aW9uIHJlc2V0Wm9vbSgpIHsgem9vbSA9IDE7IHBhblggPSAwOyBwYW5ZID0gMDsgYXBwbHlUcmFuc2Zvcm0oKTsgfQoKbGV0IHN0YWdlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xiU3RhZ2UnKTsKc3RhZ2UuYWRkRXZlbnRMaXN0ZW5lcignd2hlZWwnLCBlID0+IHsKICBlLnByZXZlbnREZWZhdWx0KCk7CiAgem9vbUJ5KGUuZGVsdGFZIDwgMCA/IDEuMTUgOiAwLjg3KTsKfSwgeyBwYXNzaXZlOiBmYWxzZSB9KTsKc3RhZ2UuYWRkRXZlbnRMaXN0ZW5lcignbW91c2Vkb3duJywgZSA9PiB7CiAgaWYgKHpvb20gPD0gMSkgcmV0dXJuOwogIGRyYWdnaW5nID0gdHJ1ZTsKICBzdGFnZS5jbGFzc0xpc3QuYWRkKCdncmFiYmluZycpOwogIGRyYWdTdGFydFggPSBlLmNsaWVudFg7IGRyYWdTdGFydFkgPSBlLmNsaWVudFk7CiAgcGFuU3RhcnRYID0gcGFuWDsgcGFuU3RhcnRZID0gcGFuWTsKfSk7CndpbmRvdy5hZGRFdmVudExpc3RlbmVyKCdtb3VzZW1vdmUnLCBlID0+IHsKICBpZiAoIWRyYWdnaW5nKSByZXR1cm47CiAgcGFuWCA9IHBhblN0YXJ0WCArIChlLmNsaWVudFggLSBkcmFnU3RhcnRYKTsKICBwYW5ZID0gcGFuU3RhcnRZICsgKGUuY2xpZW50WSAtIGRyYWdTdGFydFkpOwogIGFwcGx5VHJhbnNmb3JtKCk7Cn0pOwp3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcignbW91c2V1cCcsICgpID0+IHsgZHJhZ2dpbmcgPSBmYWxzZTsgc3RhZ2UuY2xhc3NMaXN0LnJlbW92ZSgnZ3JhYmJpbmcnKTsgfSk7CmRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsYkltZycpLmFkZEV2ZW50TGlzdGVuZXIoJ2RibGNsaWNrJywgKCkgPT4geyB6b29tID09PSAxID8gem9vbUJ5KDIpIDogcmVzZXRab29tKCk7IH0pOwoKZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigna2V5ZG93bicsIGUgPT4gewogIGxldCBsYiA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsYicpOwogIGlmICghbGIuY2xhc3NMaXN0LmNvbnRhaW5zKCdvbicpKSByZXR1cm47CiAgaWYgKGUua2V5ID09PSAnRXNjYXBlJykgY2xvc2VMQigpOwogIGlmIChlLmtleSA9PT0gJ0Fycm93TGVmdCcpIG5hdkxCKC0xKTsKICBpZiAoZS5rZXkgPT09ICdBcnJvd1JpZ2h0JykgbmF2TEIoMSk7CiAgaWYgKGUua2V5ID09PSAnKycpIHpvb21CeSgxLjI1KTsKICBpZiAoZS5rZXkgPT09ICctJykgem9vbUJ5KDAuOCk7Cn0pOwoKKGFzeW5jICgpID0+IHsKICBsZXQgc2F2ZWQgPSBhd2FpdCBsb2FkU3RhdGUoKTsKICBpZiAoc2F2ZWQgJiYgc2F2ZWQubGVuZ3RoKSBMID0gc2F2ZWQ7CiAgcmVuZGVyKCk7Cn0pKCk7Cjwvc2NyaXB0Pgo8L2JvZHk+CjwvaHRtbD4K" style="width:100%; height:100%; border:none; flex:1; background:#000;"></iframe>
+</div>
+<script>
+function openGaleriaMenu(){ document.getElementById('galeria-overlay').style.display='flex'; document.body.style.overflow='hidden'; }
+function closeGaleriaMenu(){ document.getElementById('galeria-overlay').style.display='none'; document.body.style.overflow=''; }
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const wrapper = document.getElementById('custom-neon-wrapper');
+  const header = document.getElementById('custom-neon-header');
+  const text = document.getElementById('custom-neon-text');
+  const list = document.getElementById('custom-neon-list');
+  const nativeSelect = document.getElementById('neon-color-select');
+  const opts = document.querySelectorAll('.neon-opt');
+  
+  function updateHeader(color, name){
+    header.style.borderColor = color;
+    header.style.color = color;
+    header.style.boxShadow = '0 0 15px ' + color;
+    text.textContent = name;
+    // Also update native select and trigger change
+    if(nativeSelect){
+      nativeSelect.value = color;
+      nativeSelect.dispatchEvent(new Event('change'));
+    }
+  }
+  
+  header.addEventListener('click', function(e){
+    e.stopPropagation();
+    list.style.display = list.style.display === 'none' || list.style.display === '' ? 'block' : 'none';
+  });
+  
+  opts.forEach(opt => {
+    opt.addEventListener('click', function(){
+      const col = this.dataset.value;
+      const name = this.dataset.name;
+      updateHeader(col, name);
+      list.style.display = 'none';
+    });
+    opt.addEventListener('mouseenter', function(){
+      this.style.transform = 'scale(1.02)';
+      this.style.filter = 'brightness(1.2)';
+    });
+    opt.addEventListener('mouseleave', function(){
+      this.style.transform = 'scale(1)';
+      this.style.filter = 'brightness(1)';
+    });
+  });
+  
+  document.addEventListener('click', function(){
+    list.style.display = 'none';
+  });
+  
+  // Init with Cyan
+  updateHeader('#00ffff','Cyán');
+});
 </script>
 
 </body>
