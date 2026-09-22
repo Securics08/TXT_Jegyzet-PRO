@@ -1,3 +1,90 @@
+
+<div id="discord-mentes-wrapper" style="width:100%;background:#080810;border:2px solid #3a3a5a;padding:8px 8px 10px 8px;box-sizing:border-box;display:flex;flex-direction:column;gap:6px;">
+  <div style="color:#4a6cff;font-weight:900;font-size:13px;font-family:Arial,sans-serif;display:flex;align-items:center;gap:6px;">
+    <span style="font-size:12px;">📎</span> DISCORD MENTÉS - #képek-upload
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <input id="discordWebhookInput" type="text" placeholder="https://discord.com/api/webhooks/..." style="flex:1;background:#000;color:#aaa;border:1px solid #555;border-radius:8px;padding:10px 14px;font-size:12px;outline:none;">
+    <button id="btnSaveWebhook" onclick="saveWebhook()" style="background:#4a6cff;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:4px;">💾 Mentés</button>
+    <span id="discordStatus" style="font-size:11px;color:#0f0;font-weight:800;"></span>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button id="btnJsonDiscord" onclick="sendJsonDiscord()" style="flex:1;background:#ff00ff;background:linear-gradient(90deg,#ff00ff,#ff2a9d);color:#ffff00;border:none;border-radius:10px;padding:12px;font-weight:900;font-size:13px;cursor:pointer;box-shadow:0 0 10px #ff00ff;text-align:left;">📦 JSON Discordra</button>
+    <button id="btnSzovegDiscord" onclick="sendSzovegDiscord()" style="flex:1;background:#a78bfa;background:linear-gradient(90deg,#8b7cff,#a78bfa);color:#fff;border:none;border-radius:10px;padding:12px;font-weight:900;font-size:13px;cursor:pointer;text-align:left;">📝 Szöveg Discordra</button>
+  </div>
+  <button id="btnEredetiDC" onclick="sendEredetiFormatumDC()" style="width:100%;background:linear-gradient(90deg,#00ff88,#00d4ff);color:#000;border:none;border-radius:10px;padding:13px;font-weight:900;font-size:13px;cursor:pointer;box-shadow:0 0 15px #00ff66;text-align:left;">🧩 EREDETI FORMÁTUM DC</button>
+  <div id="discordHistoryMini" style="display:none;background:#000;border-radius:6px;padding:6px;font-size:11px;color:#888;max-height:100px;overflow:auto;"></div>
+</div>
+<script>
+function getWebhook(){return (document.getElementById('discordWebhookInput')?.value||localStorage.getItem('discord_webhook_url')||'').trim();}
+function saveWebhook(){
+  const v=document.getElementById('discordWebhookInput').value.trim();
+  if(!v){alert('Add meg a webhook URL-t!');return;}
+  localStorage.setItem('discord_webhook_url',v);
+  const s=document.getElementById('discordStatus'); if(s){s.textContent='✅ Mentve'; setTimeout(()=>s.textContent='',2500);}
+}
+(function initWebhook(){
+  const saved=localStorage.getItem('discord_webhook_url');
+  if(saved){ const el=document.getElementById('discordWebhookInput'); if(el) el.value=saved; }
+})();
+async function sendToDiscordFile(blob, filename, contentText){
+  const webhook=getWebhook();
+  if(!webhook){alert('Először add meg a Discord Webhook URL-t és mentsd!');return false;}
+  localStorage.setItem('discord_webhook_url', webhook);
+  const form=new FormData();
+  form.append('file', blob, filename);
+  form.append('payload_json', JSON.stringify({content: contentText||'', username: 'TXT-Jegyzet-PRO'}));
+  const res=await fetch(webhook, {method:'POST', body:form});
+  if(!res.ok) throw new Error('Discord hiba '+res.status);
+  return true;
+}
+async function sendToDiscordText(text){
+  const webhook=getWebhook();
+  if(!webhook){alert('Add meg a webhook URL-t!');return false;}
+  const chunks=[]; let t=text; while(t.length>0){chunks.push(t.slice(0,1900)); t=t.slice(1900);}
+  for(let i=0;i<chunks.length;i++){
+    const payload={content:`**${document.getElementById('notes')?.value||'jegyzet'}** (${i+1}/${chunks.length})\n\`\`\`\n${chunks[i]}\n\`\`\``, username:'TXT-Jegyzet-PRO'};
+    const res=await fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!res.ok) throw new Error('Discord hiba '+res.status);
+    await new Promise(r=>setTimeout(r,500));
+  }
+  return true;
+}
+async function sendJsonDiscord(){
+  try{
+    const s=document.getElementById('discordStatus'); if(s) s.textContent='JSON küldés...';
+    let data={};
+    try{ data=JSON.parse(localStorage.getItem('NotesUltraDB_backup')||'{}'); }catch(e){ data={liveNotes:(typeof notes!=='undefined'?notes:{})}; }
+    if(typeof notes!=='undefined') data.liveNotes=notes;
+    const jsonStr=JSON.stringify(data,null,2);
+    const blob=new Blob([jsonStr],{type:'application/json'});
+    await sendToDiscordFile(blob, `jegyzetek-${new Date().toISOString().slice(0,10)}.json`, '📦 JSON mentés - TXT Jegyzet PRO');
+    if(s){s.textContent='✅ JSON elküldve'; setTimeout(()=>s.textContent='',3000);}
+    alert('✅ JSON elküldve Discordra!');
+  }catch(e){alert('❌ Hiba: '+e.message);}
+}
+async function sendSzovegDiscord(){
+  try{
+    const editor=document.getElementById('editor');
+    const txt=editor?.value || (typeof notes!=='undefined' && typeof current!=='undefined' && notes[current] ? notes[current] : '') || '';
+    if(!txt.trim()){alert('Nincs szöveg!');return;}
+    await sendToDiscordText(txt);
+    document.getElementById('discordStatus').textContent='✅ Szöveg elküldve';
+    alert('✅ Szöveg elküldve Discordra!');
+  }catch(e){alert('❌ Hiba: '+e.message);}
+}
+async function sendEredetiFormatumDC(){
+  try{
+    const editor=document.getElementById('editor');
+    const noteName=document.getElementById('notes')?.value || 'jegyzet';
+    const txt=editor?.value || (typeof notes!=='undefined' && notes[current] ? notes[current] : '') || '';
+    if(!txt.trim()){alert('Nincs tartalom!');return;}
+    const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+    await sendToDiscordFile(blob, `${noteName}.txt`, `🧩 EREDETI FORMÁTUM - ${noteName}`);
+    alert('✅ Eredeti formátum elküldve Discordra!');
+  }catch(e){alert('❌ Hiba: '+e.message);}
+}
+</script>
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -29,7 +116,7 @@ body { margin: 0; font-family: Arial, sans-serif; background-color: var(--bg); c
 #topbar{display:flex;flex-wrap:wrap;gap:5px;padding:10px;background:var(--panel);border-bottom:1px solid var(--border);align-items:center;}
 button,select,input{background:#000;color:var(--text);border:1px solid var(--border);padding:8px 12px;border-radius:4px;cursor:pointer;font-family:inherit;font-size:14px;display:inline-flex;align-items:center;gap:6px;}
 #notes { font-weight: bold; width: 220px; color: #00ff00; }
-#container { position: relative; width: 100vw; height: calc(100vh - 160px); background: rgba(0,0,0,0.8); overflow: hidden; }
+#container { position: relative; width: 100vw; height: calc(100vh - 300px); background: rgba(0,0,0,0.8); overflow: hidden; }
 #editor, #highlight { position: absolute; top: 0; left: 0; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; border: none; outline: none; line-height: 1.5; font-size: 25px; white-space: pre-wrap; word-wrap: break-word; margin: 0; overflow-y: auto; font-family: Arial, sans-serif; }
 #editor { background: transparent; color: transparent; caret-color: white; z-index: 2; resize: none; -webkit-text-fill-color: transparent; }
 #highlight { z-index: 1; pointer-events: none; color: inherit; }
