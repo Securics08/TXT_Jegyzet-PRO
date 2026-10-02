@@ -313,6 +313,10 @@ body.fx-exporting #highlight .rfx-holo,body.fx-exporting #highlight .rfx-aurora,
 #emojiPanel .ep-motion select{background:#0f1218;color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:4px 6px;font-size:12px;max-width:170px}
 #emojiPanel .ep-prev{display:inline-grid;place-items:center;width:34px;height:34px;font-size:22px;border-radius:9px;border:1px dashed rgba(255,255,255,.25);background:rgba(255,255,255,.04)}
 
+/* ===== LINKEK a jegyzetben ===== */
+#highlight .note-link{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:#4da3ff;cursor:pointer}
+#highlight .note-link.hov{background:rgba(77,163,255,.25);border-radius:4px;text-decoration-color:#fff}
+
 </style>
 <!-- 100 ABLAK + UBLOCK FIX -->
 <script>
@@ -631,7 +635,7 @@ function applyHighlight() {
     if(document.body.classList.contains("zenburn-mode")){
         html = html.replace(/(\[.*?\])/g, '<span class="token-section">$1</span>');
         html = html.replace(/^([\w\s]+=)/gm, '<span class="token-key">$1</span>');
-        html = html.replace(/(;.*$)/gm, '<span class="token-comment">$1</span>');
+        html = html.replace(/(&(?:[a-z]+|#\d+);)|(;.*$)/gm, function(m, ent, cm){ return ent ? ent : '<span class="token-comment">' + cm + '</span>'; });
     }
 
     // 3. Restore headers as white + colorize following text
@@ -2566,6 +2570,125 @@ function init(){
   $("emojiBtn").addEventListener("click",function(){p.classList.toggle("open");if(p.classList.contains("open")){cur=getRecent().length?0:1;render();}});
   document.addEventListener("keydown",function(e){if(e.key==="Escape") p.classList.remove("open");});
   render();
+}
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);else init();
+})();
+</script>
+<script>
+/* ===== LINKEK: bármilyen link kattintásra megnyílik (http, https, www., mailto, tel, ftp, egyedi app-linkek, sima domain...) ===== */
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+var TLD="com|net|org|info|biz|edu|gov|mil|int|eu|hu|io|co|me|tv|xyz|online|site|shop|store|tech|app|dev|ai|ly|gg|to|us|uk|de|at|fr|it|es|ro|sk|hr|si|cz|nl|be|ch|se|no|dk|fi|ru|ua|jp|cn|kr|in|br|ca|au|nz|ie|pt|gr|tr|il|ae|za|mx|ar|cl|id|vn|th|my|ph|tw|hk|sg|club|top|live|news|blog|cloud|page|link|click|space|website|pro|name|mobi|art|fun|games|wiki|ws|fm|la|im|is|ac|gl|gd|cc|stream|video|work|world|today|agency|studio|zone|network|digital|center|email|group";
+var SCH_PLAIN="mailto|tel|sms|magnet|skype|spotify|geo|sip|bitcoin|callto|facetime|maps|steam|discord|whatsapp|tg|viber|zoommtg|zoomus|msteams|slack|vscode|obsidian|notion|ipfs|news|nntp|irc|xmpp|webcal|market|intent";
+var BAD=/^(javascript|data|vbscript|blob|about)$/i;
+var RE=new RegExp(
+  "(?:[a-z][a-z0-9+.\\-]{1,24}:\\/\\/[^\\s<>\"'`\\u201E\\u201C\\u201D\\u00AB\\u00BB]+)"+                       /* bármi://... */
+ "|(?:(?:"+SCH_PLAIN+"):[^\\s<>\"'`\\u201E\\u201C\\u201D\\u00AB\\u00BB]+)"+                                  /* mailto:, tel:, magnet: ... */
+ "|(?:www\\.[^\\s<>\"'`\\u201E\\u201C\\u201D\\u00AB\\u00BB]+)"+                                              /* www.valami... */
+ "|(?:[A-Za-z0-9._%+\\-]+@[A-Za-z0-9\\-]+(?:\\.[A-Za-z0-9\\-]+)*\\.[A-Za-z]{2,})"+                          /* e-mail */
+ "|(?:\\b\\d{1,3}(?:\\.\\d{1,3}){3}(?::\\d{2,5})?(?:[\\/?#][^\\s<>\"'`]*)?)"+                                /* IP-cím */
+ "|(?:\\blocalhost(?::\\d{2,5})(?:[\\/?#][^\\s<>\"'`]*)?)"+                                                  /* localhost:port */
+ "|(?:\\b(?:[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?\\.)+(?:"+TLD+")(?::\\d{2,5})?(?:[\\/?#][^\\s<>\"'`]*)?(?![A-Za-z0-9@_\\-]))"  /* sima domain: pelda.hu/oldal */
+,"gi");
+var TAILPUNCT=/[.,;:!?\u2026'\u00BB\u2019\]}>*_~]$/;
+function clean(u){
+  for(;;){
+    if(TAILPUNCT.test(u)){u=u.slice(0,-1);continue;}
+    if(u.slice(-1)===")"&&(u.match(/\(/g)||[]).length<(u.match(/\)/g)||[]).length){u=u.slice(0,-1);continue;}
+    break;
+  }
+  return u;
+}
+function toHref(u){
+  var m=/^([a-z][a-z0-9+.\-]*):/i.exec(u);
+  if(m&&(/^[a-z][a-z0-9+.\-]*:\/\//i.test(u)||new RegExp("^(?:"+SCH_PLAIN+")$","i").test(m[1]))) return u;
+  if(/^www\./i.test(u)) return "https://"+u;
+  if(/^[^\s@\/]+@[^\s@\/]+\.[a-z]{2,}$/i.test(u)) return "mailto:"+u;
+  if(/^(?:\d{1,3}(?:\.\d{1,3}){3}|localhost)(?::\d+)?(?:[\/?#]|$)/i.test(u)) return "http://"+u;
+  return "https://"+u;
+}
+function findLinks(text){
+  var out=[],m;RE.lastIndex=0;
+  while((m=RE.exec(text))){
+    var s=m.index,u=clean(m[0]);
+    if(m[0].length===0){RE.lastIndex++;continue;}
+    var sm=/^([a-z][a-z0-9+.\-]*):/i.exec(u);
+    if(sm&&BAD.test(sm[1])) continue;
+    /* sima domainnél a szó közepéről ne induljon (pl. "ab_cd.hu" belseje, "x@y.hu" második fele) és a TLD kisbetűs legyen */
+    var prev=s>0?text.charAt(s-1):"";
+    if(/^[a-z0-9]/i.test(u)&&!/^(?:[a-z][a-z0-9+.\-]*:|www\.)/i.test(u)&&/[A-Za-z0-9_%+\-]/.test(prev)) continue;
+    if(/^[A-Za-z0-9\-.]+\.[A-Za-z]+(?:[:\/?#]|$)/.test(u)&&!/@/.test(u)&&!/^(?:[a-z][a-z0-9+.\-]*:|www\.)/i.test(u)&&!/^\d/.test(u)&&!/^localhost/i.test(u)){
+      var host=u.split(/[:\/?#]/)[0];if(!/\.[a-z]+$/.test(host)) continue;
+    }
+    if(u.length<4) continue;
+    out.push({s:s,e:s+u.length,u:u});
+    RE.lastIndex=s+Math.max(1,u.length);
+  }
+  return out;
+}
+
+/* a #highlight rétegben aláhúzott, kattintható span-ok */
+function markLinks(){
+  var ed=$("editor"),hl=$("highlight");if(!ed||!hl) return;
+  var old=hl.querySelectorAll(".note-link");
+  if(old.length){[].forEach.call(old,function(n){var p=n.parentNode;while(n.firstChild) p.insertBefore(n.firstChild,n);p.removeChild(n);});hl.normalize();}
+  var val=ed.value;if(!/[.:@]/.test(val)) return;
+  var links=findLinks(val);if(!links.length) return;
+  var tw=document.createTreeWalker(hl,NodeFilter.SHOW_TEXT,null),nodes=[],n,off=0;
+  while((n=tw.nextNode())){nodes.push({n:n,s:off,e:off+n.nodeValue.length});off+=n.nodeValue.length;}
+  links.forEach(function(L){
+    nodes.forEach(function(x){
+      if(x.e<=L.s||x.s>=L.e) return;
+      var a=Math.max(L.s,x.s)-x.s,b=Math.min(L.e,x.e)-x.s;
+      var node=x.n,txt=node.nodeValue;
+      var sp=document.createElement("span");sp.className="note-link";sp.setAttribute("data-u",L.u);sp.textContent=txt.slice(a,b);
+      var par=node.parentNode,ref=node.nextSibling,after=txt.slice(b);
+      node.nodeValue=txt.slice(0,a);
+      par.insertBefore(sp,ref);
+      if(after){var t=document.createTextNode(after);par.insertBefore(t,ref);x.n=t;x.s=x.s+b;}
+      else{x.n=document.createTextNode("");x.e=x.s;}
+    });
+  });
+}
+
+/* Találat-vizsgálat KOORDINÁTÁVAL: a #highlight réteg pointer-events:none, ezért az elementFromPoint nem látná */
+function linkAt(x,y){
+  var hl=$("highlight");if(!hl) return null;
+  var spans=hl.querySelectorAll(".note-link");if(!spans.length) return null;
+  var lh=parseFloat(getComputedStyle(hl).lineHeight)||0;
+  for(var i=0;i<spans.length;i++){
+    var rs=spans[i].getClientRects();
+    for(var k=0;k<rs.length;k++){
+      var r=rs[k],pad=lh>r.height?(lh-r.height)/2:0;
+      if(x>=r.left&&x<=r.right&&y>=r.top-pad&&y<=r.bottom+pad) return spans[i];
+    }
+  }
+  return null;
+}
+function openLink(u){
+  var href=toHref(u);
+  try{var a=document.createElement("a");a.href=href;a.target="_blank";a.rel="noopener noreferrer";a.style.display="none";document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},0);}
+  catch(e){try{window.open(href,"_blank");}catch(x){}}
+}
+
+function init(){
+  var ed=$("editor");if(!ed) return;
+  var _ah=window.applyHighlight;
+  if(typeof _ah==="function"){window.applyHighlight=function(){var r=_ah.apply(this,arguments);try{markLinks();}catch(e){}return r;};}
+  ed.addEventListener("click",function(e){
+    if(ed.selectionStart!==ed.selectionEnd) return;   /* kijelölés közben ne nyisson */
+    if(e.button!==0||e.altKey) return;                 /* Alt+kattintás: csak szerkesztés */
+    var l=linkAt(e.clientX,e.clientY);
+    if(l){openLink(l.getAttribute("data-u"));}
+  });
+  var raf=0,lastE=null,hov=null;
+  function clearHov(){if(hov){hov.classList.remove("hov");hov=null;}}
+  ed.addEventListener("mousemove",function(e){lastE=e;if(raf) return;raf=requestAnimationFrame(function(){raf=0;if(!lastE) return;var l=linkAt(lastE.clientX,lastE.clientY);
+    if(l!==hov){clearHov();if(l){l.classList.add("hov");hov=l;}}
+    ed.style.cursor=l?"pointer":"";ed.title=l?("Kattintásra megnyílik: "+l.getAttribute("data-u")+"   (Alt+kattintás: csak szerkesztés)"):"";});});
+  ed.addEventListener("mouseleave",function(){ed.style.cursor="";clearHov();});
+  try{markLinks();}catch(e){}
 }
 if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);else init();
 })();
