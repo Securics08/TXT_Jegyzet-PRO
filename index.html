@@ -125,6 +125,15 @@ body.no-neon-active .hu-header, body.no-neon-active .hu-text, body.no-neon-activ
 .eff-btn.matrix{border-color:#00FF41;color:#00FF41;background:rgba(0,255,65,.1)}
 .eff-btn.rand{border-color:#B6FF5A;color:#B6FF5A;background:linear-gradient(135deg,rgba(182,255,90,.18),rgba(0,255,255,.1));font-weight:800}
 .eff-btn.on{border-color:var(--a);color:var(--a);background:rgba(255,255,255,.12);box-shadow:0 0 8px var(--a)}
+/* kategória-jelölés: melyik gomb a jegyzet szövegére (txt), melyik a fejlécre/keretre (hdr), melyik a betűtípusra (fnt) hat */
+.eff-btn.cat-txt{box-shadow:inset 3px 0 0 #6ab0ff}
+.eff-btn.cat-hdr{box-shadow:inset 3px 0 0 #ff9f4a}
+.eff-btn.cat-fnt{box-shadow:inset 3px 0 0 #b07cff}
+.eff-btn.cat-txt.on{box-shadow:inset 3px 0 0 #6ab0ff,0 0 8px var(--a)}
+.eff-btn.cat-hdr.on{box-shadow:inset 3px 0 0 #ff9f4a,0 0 8px var(--a)}
+.eff-btn.cat-fnt.on{box-shadow:inset 3px 0 0 #b07cff,0 0 8px var(--a)}
+.eff-sep{flex:0 0 auto;display:inline-flex;align-items:center;padding:0 8px 0 2px;font-size:9px;letter-spacing:.04em;color:rgba(255,255,255,.45);white-space:nowrap;cursor:default;user-select:none;border-left:1px solid rgba(255,255,255,.14);margin-left:4px}
+.eff-sep:first-child{border-left:0;margin-left:0}
 .eNav{flex:0 0 24px;width:24px;height:24px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;display:grid;place-items:center}
 .presetbox{display:flex;flex-direction:column;gap:4px;flex:0 0 auto}
 .presetbox button{width:24px;height:20px;border-radius:7px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#fff;font-size:11px;line-height:1;padding:0;cursor:pointer;display:block}
@@ -2414,7 +2423,17 @@ function setAccent(hex){
   if(h){h.style.borderColor=hex;h.style.color=hex;h.style.boxShadow="0 0 15px "+hex;}
   if(t){var nm="Egyedi "+hex.toUpperCase(),os=document.querySelectorAll(".neon-opt");for(i=0;i<os.length;i++){if((os[i].dataset.value||"").toLowerCase()===hex.toLowerCase()){nm=os[i].dataset.name;break;}}t.textContent=nm;}
   lsSet("securics_final_color",hex);lsSet(PFX+"accent",hex);
+  if(!window.__calSyncing){try{if(typeof window.calSetAccent==="function") window.calSetAccent(hex);}catch(e){}}
 }
+window.setAccent=setAccent;
+window.securicsToggleEffect=function(cls,on){
+  if(!cls) return;
+  if(TEXTFX.indexOf(cls)!==-1){TEXTFX.forEach(function(c){B.classList.remove(c);});if(on) B.classList.add(cls);}
+  else if(HDRFX.indexOf(cls)!==-1){B.classList.toggle(cls,!!on);}
+  else if(FONTS.indexOf(cls)!==-1){FONTS.forEach(function(c){B.classList.remove(c);});if(on) B.classList.add(cls);}
+  else return;
+  after();
+};
 
 /* --- MATRIX --- */
 function startMatrix(){var c=$("matrixCanvas");c.classList.add("on");var ctx=c.getContext("2d");c.width=window.innerWidth;c.height=window.innerHeight;var chars="SECURICS01アイウエオカキクケコABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";var cols=Math.floor(c.width/14);var drops=[];for(var i=0;i<cols;i++) drops[i]=Math.random()*-20;
@@ -2479,15 +2498,26 @@ function initFM(){var dd=$("fontDD"),tr=$("fontTrigger"),menu=$("fontMenu");tr.a
 function initButtons(){
   var line=$("effectsLine");
   var quick=[{l:"Glow",cls:"effect-glow"},{l:"Neon",cls:"effect-neon"},{l:"Gradient",cls:"effect-gradient"},{l:"Aurora",cls:"effect-aurora"},{l:"Mono",cls:"effect-mono"},{l:"Serif",cls:"effect-serif"},{l:"Space",cls:"effect-space"},{l:"Code",cls:"effect-code"},{l:"Tech",cls:"effect-orbitron"},{l:"Script",cls:"effect-script"},{l:"Pixel",cls:"effect-pixel"},{l:"🌈 Rainbow",cls:"effect-rainbow"},{l:"✨ Shine",cls:"effect-shine"},{l:"💓 Pulse",cls:"effect-pulse"},{l:"⚡ Flicker",cls:"effect-flicker"},{l:"👾 Glitch",cls:"effect-glitch"},{l:"🔥 Fire",cls:"effect-fire"},{l:"🧊 Ice",cls:"effect-ice"},{l:"🪐 Orbit",cls:"effect-orbit"},{l:"📡 Scan",cls:"effect-scan"},{l:"🌌 Holo",cls:"effect-holo"},{l:"⭐ Stars",cls:"effect-stars"},{l:"🏃 Futófény",cls:"effect-chase"},{l:"🏃🏃 Futófény ×2",cls:"effect-chase2"},{l:"💡 Izzósor",cls:"effect-bulbs"},{l:"↔ Szél-fény",cls:"effect-edge"},{l:"➖ Futó szaggatott",cls:"effect-dashrun"},{l:"📦 Doboz-pulzus",cls:"effect-boxpulse"},{l:"🌈 RGB keret",cls:"effect-rgbborder"},{l:"⚡ Villanás",cls:"effect-flash"},{l:"🫧 Bokeh",cls:"effect-bokeh"},{l:"🕹 Retro rács",cls:"effect-retrogrid"},{l:"🚧 Csíkok",cls:"effect-stripes"},{l:"📐 Sarkok",cls:"effect-corners"},{l:"🟩 Digit-eső",cls:"effect-rain"},{l:"🔦 Reflektor",cls:"effect-spot"},{l:"🎚 Színsáv",cls:"effect-gradbar"},{l:"💡 Neon tábla",cls:"effect-neonsign"},{l:"✏️ Körvonal",cls:"effect-outline"},{l:"🪞 Króm",cls:"effect-chrome"},{l:"🥇 Arany",cls:"effect-gold"},{l:"🎈 Lebegés",cls:"effect-float"},{l:"📼 Retro",cls:"effect-retro"},{l:"⚡ Elektromos",cls:"effect-electric"},{l:"🌫 Elmosódás",cls:"effect-blur"},{l:"🎨 Színváltó",cls:"effect-hue"},{l:"↔ Betűköz",cls:"effect-tracking"},{l:"🔄 3D forgás",cls:"effect-flip3d"},{l:"🪨 Dombor",cls:"effect-emboss"},{l:"🌋 Láva",cls:"effect-lava"},{l:"⌨️ Gépelés",cls:"effect-typing"},{l:"🟩 MATRIX",matrix:true},{l:"Stop",matrixStop:true}];
-  quick.forEach(function(eff){var b=document.createElement("button");b.className="eff-btn";if(eff.matrix) b.className+=" matrix";b.textContent=eff.l;if(eff.cls) b.setAttribute("data-cls",eff.cls);if(eff.matrix) b.setAttribute("data-mx","1");
-    b.addEventListener("click",function(){
-      if(eff.matrix){startMatrix();save();syncBtns();return;}
-      if(eff.matrixStop){stopMatrix();save();syncBtns();return;}
-      var isFont=FONTS.indexOf(eff.cls)!==-1;var wasOn=B.classList.contains(eff.cls);
-      if(isFont){FONTS.forEach(function(c){B.classList.remove(c);});setCF("");}else if(TEXTFX.indexOf(eff.cls)!==-1){TEXTFX.forEach(function(c){B.classList.remove(c);});}
-      if(wasOn){B.classList.remove(eff.cls);}else{B.classList.add(eff.cls);}
-      after();});
-    line.appendChild(b);});
+  /* a gombokat 3 jól elkülönített csoportba rendezzük, hogy ne keveredjen a jegyzet-szöveg / fejléc / betűtípus effekt */
+  function catOf(eff){if(eff.matrix||eff.matrixStop) return"mx";if(FONTS.indexOf(eff.cls)!==-1) return"fnt";if(HDRFX.indexOf(eff.cls)!==-1) return"hdr";if(TEXTFX.indexOf(eff.cls)!==-1) return"txt";return"mx";}
+  var groups={txt:[],hdr:[],fnt:[],mx:[]};
+  quick.forEach(function(eff){groups[catOf(eff)].push(eff);});
+  var GL=[["txt","📝 Szöveg effektek (a jegyzet szövegére / a kijelöltre hat)"],["hdr","🖼 Fejléc effektek (a fejlécre és a keretre hat)"],["fnt","🔤 Betűtípusok"],["mx","⚙ Egyéb"]];
+  GL.forEach(function(gi){
+    var gk=gi[0],list=groups[gk];if(!list.length) return;
+    var h=document.createElement("span");h.className="eff-sep";h.textContent=gi[1];line.appendChild(h);
+    list.forEach(function(eff){
+      var b=document.createElement("button");b.className="eff-btn cat-"+gk;if(gk==="hdr") b.className+=" hdr";if(gk==="fnt") b.className+=" fnt";if(eff.matrix) b.className+=" matrix";
+      b.textContent=eff.l;if(eff.cls) b.setAttribute("data-cls",eff.cls);if(eff.matrix) b.setAttribute("data-mx","1");
+      b.addEventListener("click",function(){
+        if(eff.matrix){startMatrix();save();syncBtns();return;}
+        if(eff.matrixStop){stopMatrix();save();syncBtns();return;}
+        var isFont=FONTS.indexOf(eff.cls)!==-1;var wasOn=B.classList.contains(eff.cls);
+        if(isFont){FONTS.forEach(function(c){B.classList.remove(c);});setCF("");}else if(TEXTFX.indexOf(eff.cls)!==-1){TEXTFX.forEach(function(c){B.classList.remove(c);});}
+        if(wasOn){B.classList.remove(eff.cls);}else{B.classList.add(eff.cls);}
+        after();});
+      line.appendChild(b);});
+  });
   $("eLeft").addEventListener("click",function(){line.scrollBy({left:-200,behavior:"smooth"});});
   $("eRight").addEventListener("click",function(){line.scrollBy({left:200,behavior:"smooth"});});
   $("randBtn2").addEventListener("click",function(){
@@ -2839,15 +2869,15 @@ if(document.readyState==="loading") document.addEventListener("DOMContentLoaded"
 .calB{background:color-mix(in srgb,var(--cbg) 70%,var(--ca));color:var(--ctx);border:1px solid var(--ca);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:13px}
 .calB:hover{background:#12335f}.calB.g{color:#00ff88;border-color:#00ff88}.calB.r{color:#ff5c7a;border-color:#ff5c7a}.calB.y{color:#ffd24a;border-color:#ffd24a}
 .calBody{flex:1;display:flex;min-height:0}
-.calMonth{flex:1.2;padding:12px;overflow:auto;min-width:0}
-.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-.calDow{text-align:center;font-size:12px;color:#6a8fc0;padding:4px}
-.calD{min-height:78px;background:var(--cpn);border:1px solid color-mix(in srgb,var(--ca) 45%,transparent);border-radius:8px;padding:5px 6px;cursor:pointer;position:relative;overflow:hidden}
+.calMonth{flex:1.2;padding:12px;overflow:auto;min-width:0;--cal-zoom:1}
+.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:calc(5px*var(--cal-zoom,1))}
+.calDow{text-align:center;font-size:calc(12px*var(--cal-zoom,1));color:#6a8fc0;padding:4px}
+.calD{min-height:calc(78px*var(--cal-zoom,1));background:var(--cpn);border:1px solid color-mix(in srgb,var(--ca) 45%,transparent);border-radius:8px;padding:calc(5px*var(--cal-zoom,1)) calc(6px*var(--cal-zoom,1));cursor:pointer;position:relative;overflow:hidden}
 .calD:hover{border-color:var(--ca);box-shadow:0 0 10px var(--ca)}
 .calD.o{opacity:.35}.calD.t{border-color:#00ff88;box-shadow:inset 0 0 12px rgba(0,255,136,.25)}.calD.s{border-color:#ff3b8d;box-shadow:0 0 12px rgba(255,59,141,.6)}
-.calD b{font-size:13px;color:#cfe4ff}.calD.we b{color:#ff9f6a}
-.calD .pv{white-space:pre-line;font-size:10.5px;color:#9db8de;margin-top:3px;line-height:1.25;max-height:52px;overflow:hidden;word-break:break-word}
-.calD .bd{position:absolute;right:4px;bottom:3px;font-size:10px;color:#ffd24a}
+.calD b{font-size:calc(13px*var(--cal-zoom,1));color:#cfe4ff}.calD.we b{color:#ff9f6a}
+.calD .pv{white-space:pre-line;font-size:calc(10.5px*var(--cal-zoom,1));color:#9db8de;margin-top:3px;line-height:1.25;max-height:calc(52px*var(--cal-zoom,1));overflow:hidden;word-break:break-word}
+.calD .bd{position:absolute;right:4px;bottom:3px;font-size:calc(10px*var(--cal-zoom,1));color:#ffd24a}
 .calDay{position:relative;flex:1;border-left:1px solid var(--ca);display:flex;flex-direction:column;min-width:0;background:color-mix(in srgb,var(--cbg) 92%,var(--ca))}
 .calDay h3{margin:0;padding:10px 14px;font-size:16px;color:#00ff88;border-bottom:1px solid #12335f}
 .calDayIn{flex:1;overflow:auto;padding:12px 14px}
@@ -2957,7 +2987,7 @@ if(document.readyState==="loading") document.addEventListener("DOMContentLoaded"
   </span>
  </div>
  <div class="calBody">
-  <div class="calMonth"><div class="calGrid" id="calGrid"></div></div>
+  <div class="calMonth" id="calMonth" title="Görgesd az egeret a nézet nagyításához/kicsinyítéséhez"><div class="calGrid" id="calGrid"></div></div>
   <div class="calDay">
    <h3 id="calDayT" style="display:flex;align-items:center;gap:10px"><span id="calDayTx" style="flex:1"></span><button class="calB" id="calFull" title="Dupla kattintás a napra: teljes ablak">⛶ Teljes ablak</button></h3>
    <div class="calDayIn">
@@ -3203,6 +3233,10 @@ $('calPrev').onclick=function(){view=new Date(view.getFullYear(),view.getMonth()
 $('calNext').onclick=function(){view=new Date(view.getFullYear(),view.getMonth()+1,1);render()};
 $('calToday').onclick=function(){pick(key(new Date()))};
 $('calSearch').oninput=render;
+var calZoomLvl=parseFloat(localStorage.getItem('securics_cal_gridzoom'))||1;
+function calZoomSet(z){calZoomLvl=Math.max(.55,Math.min(2.5,z));var cm=$('calMonth');if(cm)cm.style.setProperty('--cal-zoom',calZoomLvl);try{localStorage.setItem('securics_cal_gridzoom',calZoomLvl)}catch(e){}}
+calZoomSet(calZoomLvl);
+(function(){var cm=$('calMonth');if(cm)cm.addEventListener('wheel',function(e){e.preventDefault();calZoomSet(calZoomLvl+(e.deltaY<0?.08:-.08))},{passive:false})})();
 $('calTa').oninput=function(){if(!sel)pick(key(new Date()));var d=day(sel);d.r=rtShift(d.t||'',this.value,d.r);d.t=this.value;rtRender();sv()};
 $('calPick').onclick=function(){$('calFile').click()};
 $('calFile').onchange=function(){addFiles(this.files);this.value=''};
@@ -3214,19 +3248,42 @@ $('calClr').onclick=function(){if(sel&&confirm('Törlöd a nap jegyzetét, óra-
 $('calToNote').onclick=function(){
   if(!sel)return alert('Válassz egy napot');
   var nm='📅 '+sel;
-  try{if(!window.notes&&typeof notes==='undefined')throw 0;if(notes[nm]!==undefined){var k=2;while(notes[nm+' ('+k+')']!==undefined)k++;nm=nm+' ('+k+')'}notes[nm]=[(DATA[sel]&&DATA[sel].t)||'',hTxt(DATA[sel])].filter(Boolean).join('\n\n');current=nm;refresh();saveData();$('calOv').classList.remove('on')}catch(e){alert('A jegyzet-rendszer nem érhető el')}
+  try{
+    if(!window.notes&&typeof notes==='undefined')throw 0;
+    if(notes[nm]!==undefined){var k=2;while(notes[nm+' ('+k+')']!==undefined)k++;nm=nm+' ('+k+')'}
+    var dx=DATA[sel],dt=(dx&&dx.t)||'',hx=hTxt(dx);
+    notes[nm]=[dt,hx].filter(Boolean).join('\n\n');
+    /* a nap jegyzetének szín/effekt-formázását (ugyanaz a {start,end,color,fx} formátum) is átvisszük */
+    try{if(dt&&dx&&dx.r&&dx.r.length&&typeof getColorRanges==='function'){var cr=getColorRanges();cr[nm]=dx.r.map(function(g){return {start:g.start,end:g.end,color:g.color,fx:g.fx}});if(typeof saveColorRanges==='function')saveColorRanges()}}catch(e){}
+    current=nm;refresh();saveData();$('calOv').classList.remove('on')
+  }catch(e){alert('A jegyzet-rendszer nem érhető el')}
 };
 $('calFromNote').onclick=function(){
   var ed=document.getElementById('editor');if(!ed||!ed.value.trim())return alert('A megnyitott jegyzet üres');
   if(!sel)pick(key(new Date()));var d=day(sel);
-  if(d.t&&d.t.trim()&&d.t!==ed.value&&!confirm('Ennek a napnak már van jegyzete. Felülírod a megnyitott jegyzettel ("'+current+'")?\nOK = felülír, Mégse = hozzáfűz'))d.t=d.t+'\n\n'+ed.value;
-  else d.t=ed.value;
-  put(sel);$('calTa').value=d.t;renderDay();render();
+  var srcR=[];try{if(typeof getColorRanges==='function')srcR=(getColorRanges()[current]||[]).map(function(g){return {start:g.start,end:g.end,color:g.color,fx:g.fx}})}catch(e){}
+  if(d.t&&d.t.trim()&&d.t!==ed.value&&!confirm('Ennek a napnak már van jegyzete. Felülírod a megnyitott jegyzettel ("'+current+'")?\nOK = felülír, Mégse = hozzáfűz')){
+    var off=d.t.length+2;
+    d.r=(d.r||[]).concat(srcR.map(function(g){return {start:g.start+off,end:g.end+off,color:g.color,fx:g.fx}}));
+    d.t=d.t+'\n\n'+ed.value;
+  }else{d.t=ed.value;d.r=srcR}
+  put(sel);$('calTa').value=d.t;rtRender();renderDay();render();
 };
 $('calIns').onclick=function(){
-  var t=[(DATA[sel]&&DATA[sel].t)||'',hTxt(DATA[sel])].filter(Boolean).join('\n');if(!t)return alert('A napi jegyzet üres');
+  var dx=DATA[sel],dt=(dx&&dx.t)||'',hx=hTxt(dx);
+  var t=[dt,hx].filter(Boolean).join('\n');if(!t)return alert('A napi jegyzet üres');
   var ed=document.getElementById('editor');if(!ed)return;
-  var p=ed.selectionStart||0;ed.value=ed.value.slice(0,p)+'\n'+sel+'\n'+t+'\n'+ed.value.slice(p);ed.dispatchEvent(new Event('input',{bubbles:true}));
+  var p=ed.selectionStart||0;
+  ed.value=ed.value.slice(0,p)+'\n'+sel+'\n'+t+'\n'+ed.value.slice(p);ed.dispatchEvent(new Event('input',{bubbles:true}));
+  /* a beszúrt napi szöveg szín/effekt-formázását (ugyanaz a {start,end,color,fx} formátum) is átvisszük a jegyzetbe */
+  try{
+    if(dt&&dx&&dx.r&&dx.r.length&&typeof getColorRanges==='function'){
+      var off=p+1+sel.length+1,cr=getColorRanges(),arr=cr[current]||(cr[current]=[]);
+      dx.r.forEach(function(g){var n={start:g.start+off,end:g.end+off};if(g.color)n.color=g.color;if(g.fx)n.fx=g.fx;arr.push(n)});
+      saveColorRanges();
+      if(typeof applyHighlight==='function')applyHighlight();
+    }
+  }catch(e){}
   try{notes[current]=ed.value;saveData()}catch(e){}
   $('calOv').classList.remove('on');
 };
@@ -3252,10 +3309,15 @@ document.addEventListener('keydown',function(e){
 var ST={ca:'#2a6fd6',bg:'#030814',pn:'#081a35',tx:'#e6f0ff',fx:[]};
 var THEMES=[['#2a6fd6','#030814','#081a35','#e6f0ff'],['#00ff88','#020a06','#06180f','#d8ffe9'],['#ff3b8d','#12030a','#220712','#ffe3ee'],['#b07cff','#0b0618','#160d2c','#f0e6ff'],['#ffd24a','#0e0a02','#1f1704','#fff5d6'],['#ff6a00','#100500','#221000','#ffe9d6'],['#ffffff','#000000','#111111','#ffffff'],['#1f3a5f','#f2f6fb','#ffffff','#10213a']];
 var RING=['orbit','chase','chase2','rgb'],FXL=[['neon','💡 Neon'],['orbit','🪐 Orbit'],['chase','🏃 Futófény'],['chase2','🏃🏃 Futófény ×2'],['rgb','🌈 RGB keret'],['pulse','💓 Pulzus'],['scan','📡 Scan alul'],['edge','↔ Szél-fény felül'],['dash','➖ Futó szaggatott'],['bulbs','💡 Izzósor'],['holo','🌌 Holo'],['aurora','🌠 Aurora'],['flash','⚡ Villanás'],['stars','⭐ Csillagok']];
+var BM={neon:'neon',orbit:'orbit',scan:'scan',holo:'holo',aurora:'aurora',stars:'stars',chase:'chase',chase2:'chase2',rgbborder:'rgb',boxpulse:'pulse',edge:'edge',dashrun:'dash',bulbs:'bulbs',flash:'flash'};
+var RBM={};Object.keys(BM).forEach(function(bk){RBM[BM[bk]]=bk});
+/* két irányú szinkron a jegyzet effekt-sávjával: szín + effektek – mindkét irányba */
+window.calSetAccent=function(hex){if(!hex||ST.ca===hex)return;window.__calSyncing=true;ST.ca=hex;styApply();window.__calSyncing=false};
+function calPushAccent(){if(window.__calSyncing)return;window.__calSyncing=true;try{if(typeof window.setAccent==='function')window.setAccent(ST.ca)}catch(e){}window.__calSyncing=false}
+function calPushFx(k,on){if(window.__calSyncing||!RBM[k])return;window.__calSyncing=true;try{if(typeof window.securicsToggleEffect==='function')window.securicsToggleEffect('effect-'+RBM[k],on)}catch(e){}window.__calSyncing=false}
 function styApply(){
   var o=$('calOv');o.style.setProperty('--ca',ST.ca);o.style.setProperty('--cbg',ST.bg);o.style.setProperty('--cpn',ST.pn);o.style.setProperty('--ctx',ST.tx);
   [].slice.call(o.classList).forEach(function(k){if(/^(fx|ring)-/.test(k))o.classList.remove(k)});
-  var BM={neon:'neon',orbit:'orbit',scan:'scan',holo:'holo',aurora:'aurora',stars:'stars',chase:'chase',chase2:'chase2',rgbborder:'rgb',boxpulse:'pulse',edge:'edge',dashrun:'dash',bulbs:'bulbs',flash:'flash'};
   var all=ST.fx.slice();
   /* a felső effekt-csík (body.effect-*) effektjei a naptár keretére is érvényesek */
   Object.keys(BM).forEach(function(bk){if(document.body.classList.contains('effect-'+bk)){var k=BM[bk];if(RING.indexOf(k)>-1)all=all.filter(function(x){return RING.indexOf(x)<0});if(all.indexOf(k)<0)all.push(k)}});
@@ -3267,12 +3329,12 @@ function styApply(){
 (function(){
   try{var s=JSON.parse(localStorage.getItem('securics_cal_style')||'null');if(s&&s.ca)ST=s}catch(e){}
   FXL.forEach(function(f){var b=document.createElement('button');b.textContent=f[1];b.dataset.k=f[0];
-    b.onclick=function(){var i=ST.fx.indexOf(f[0]);if(i>-1)ST.fx.splice(i,1);else{if(RING.indexOf(f[0])>-1)ST.fx=ST.fx.filter(function(k){return RING.indexOf(k)<0});ST.fx.push(f[0])}styApply()};
+    b.onclick=function(){var i=ST.fx.indexOf(f[0]),on=i<0;if(i>-1)ST.fx.splice(i,1);else{if(RING.indexOf(f[0])>-1)ST.fx=ST.fx.filter(function(k){return RING.indexOf(k)<0});ST.fx.push(f[0])}styApply();calPushFx(f[0],on)};
     $('calFx').appendChild(b)});
-  var off=document.createElement('button');off.textContent='✖ Effekt le';off.onclick=function(){ST.fx=[];styApply()};$('calFx').appendChild(off);
-  var rnd=document.createElement('button');rnd.textContent='🎲 Véletlen';rnd.onclick=function(){var t=THEMES[Math.floor(Math.random()*THEMES.length)];ST.ca='#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0');ST.bg=t[1];ST.pn=t[2];ST.tx=t[3];ST.fx=[RING[Math.floor(Math.random()*4)]];var e=FXL.slice(5).sort(function(){return Math.random()-.5})[0][0];ST.fx.push(e);styApply()};$('calFx').appendChild(rnd);
-  THEMES.forEach(function(t){var i=document.createElement('i');i.style.background='linear-gradient(135deg,'+t[0]+' 50%,'+t[1]+' 50%)';i.title='Téma';i.onclick=function(){ST.ca=t[0];ST.bg=t[1];ST.pn=t[2];ST.tx=t[3];styApply()};$('calThemes').appendChild(i)});
-  [['cKeret','ca'],['cBg','bg'],['cPn','pn'],['cTx','tx']].forEach(function(p){$(p[0]).oninput=function(){ST[p[1]]=this.value;styApply()}});
+  var off=document.createElement('button');off.textContent='✖ Effekt le';off.onclick=function(){var old=ST.fx.slice();ST.fx=[];styApply();old.forEach(function(k){calPushFx(k,false)})};$('calFx').appendChild(off);
+  var rnd=document.createElement('button');rnd.textContent='🎲 Véletlen';rnd.onclick=function(){var t=THEMES[Math.floor(Math.random()*THEMES.length)];ST.ca='#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0');ST.bg=t[1];ST.pn=t[2];ST.tx=t[3];var old=ST.fx.slice();ST.fx=[RING[Math.floor(Math.random()*4)]];var e=FXL.slice(5).sort(function(){return Math.random()-.5})[0][0];ST.fx.push(e);styApply();calPushAccent();old.forEach(function(k){if(ST.fx.indexOf(k)<0)calPushFx(k,false)});ST.fx.forEach(function(k){calPushFx(k,true)})};$('calFx').appendChild(rnd);
+  THEMES.forEach(function(t){var i=document.createElement('i');i.style.background='linear-gradient(135deg,'+t[0]+' 50%,'+t[1]+' 50%)';i.title='Téma';i.onclick=function(){ST.ca=t[0];ST.bg=t[1];ST.pn=t[2];ST.tx=t[3];styApply();calPushAccent()};$('calThemes').appendChild(i)});
+  [['cKeret','ca'],['cBg','bg'],['cPn','pn'],['cTx','tx']].forEach(function(p){$(p[0]).oninput=function(){ST[p[1]]=this.value;styApply();if(p[1]==='ca')calPushAccent()}});
   $('calStyBtn').onclick=function(){$('calSty').classList.toggle('on')};
   ['#ff0000','#ff8000','#ffff00','#00ff00','#00ffff','#0000ff','#ff00ff','#ffffff'].forEach(function(col){var i=document.createElement('i');i.style.background=col;i.dataset.c=col;i.title='Nap színe';
     i.onclick=function(){if(!sel)return;var d=day(sel);d.col=d.col===col?'':col;put(sel);renderDay();render()};$('calDayCol').appendChild(i)});
@@ -3282,10 +3344,10 @@ function styApply(){
   function ps(a){try{localStorage.setItem(PK,JSON.stringify(a))}catch(e){alert('Nem sikerült menteni')}}
   function pfill(sel){var a=pl(),s=$('pSel');s.innerHTML='<option value="">📂 Mentett stílusok ('+a.length+')…</option>';a.forEach(function(p,i){var o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+p.n+(p.st.fx.length?' ✨'+p.st.fx.length:'');s.appendChild(o)});if(sel!=null)s.value=sel}
   $('pSave').onclick=function(){var a=pl(),n=prompt('Név a mentett stílusnak:','Stílus '+(a.length+1));if(n===null)return;a.push({n:n||('Stílus '+(a.length+1)),st:JSON.parse(JSON.stringify(ST))});ps(a);pfill(a.length-1)};
-  $('pLoad').onclick=function(){var v=$('pSel').value;if(v==='')return alert('Válassz egy mentett stílust');var p=pl()[+v];if(!p)return;ST=JSON.parse(JSON.stringify(p.st));styApply()};
+  $('pLoad').onclick=function(){var v=$('pSel').value;if(v==='')return alert('Válassz egy mentett stílust');var p=pl()[+v];if(!p)return;var old=ST.fx.slice();ST=JSON.parse(JSON.stringify(p.st));styApply();calPushAccent();old.forEach(function(k){if(ST.fx.indexOf(k)<0)calPushFx(k,false)});ST.fx.forEach(function(k){calPushFx(k,true)})};
   $('pSel').onchange=function(){if(this.value!=='')$('pLoad').onclick()};
   $('pDel').onclick=function(){var v=$('pSel').value;if(v==='')return;var a=pl();if(!confirm('Törlöd: '+a[+v].n+'?'))return;a.splice(+v,1);ps(a);pfill()};
-  $('pReset').onclick=function(){ST=JSON.parse(JSON.stringify(DEF));styApply();try{if(window.__fxBaseReset)window.__fxBaseReset()}catch(e){}};
+  $('pReset').onclick=function(){var old=ST.fx.slice();ST=JSON.parse(JSON.stringify(DEF));styApply();calPushAccent();old.forEach(function(k){calPushFx(k,false)});try{if(window.__fxBaseReset)window.__fxBaseReset()}catch(e){}};
   pfill();
   styApply();
   try{new MutationObserver(function(){styApply()}).observe(document.body,{attributes:true,attributeFilter:['class']})}catch(e){}
