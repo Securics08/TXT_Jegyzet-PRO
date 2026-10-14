@@ -265,7 +265,7 @@ body.fx-exporting #highlight .rfx-gradient,body.fx-exporting #highlight .rfx-rai
 #fxSelBtn{border-color:#6ab0ff;color:#6ab0ff;background:rgba(42,111,214,.15);font-weight:800}
 #fxSelBtn.on{background:#2a6fd6;color:#fff;box-shadow:0 0 10px #2a6fd6;border-color:#8ec8ff}
 #fxSelClr{border-color:#ff8888;color:#ff8888}
-body.fxsel-mode #effectsLine .eff-btn[data-cls]:not(.hdr):not(.fnt){outline:1px dashed rgba(106,176,255,.45)}
+body.fxsel-mode #effectsLineTxt .eff-btn[data-cls]:not(.hdr):not(.fnt){outline:1px dashed rgba(106,176,255,.45)}
 
 .rfx-neon{color:#fff!important;-webkit-text-fill-color:currentColor;text-shadow:0 0 4px #fff,0 0 10px var(--a),0 0 22px var(--a),0 0 40px var(--a)!important}
 .rfx-matrix{color:#00ff41!important;-webkit-text-fill-color:currentColor;text-shadow:0 0 6px #00ff41,0 0 16px #00ff41!important}
@@ -2608,7 +2608,7 @@ function selFx(sel){var r=(getColorRanges()[current]||[]).filter(function(g){ret
 
 /* A meglévő effekt-gombok elé kerülünk (capture): kijelölés-módban a szöveg-effektek a kijelölésre mennek */
 document.addEventListener("click",function(e){
-  var b=e.target.closest&&e.target.closest("#effectsLine .eff-btn[data-cls],#randBtn2");
+  var b=e.target.closest&&e.target.closest("#effectsLineTxt .eff-btn[data-cls],#effectsLineHdr .eff-btn[data-cls],#randBtn2");
   if(!b||!selMode) return;
   var cls=b.getAttribute("data-cls");
   var isRand=b.id==="randBtn2";
@@ -2625,7 +2625,7 @@ document.addEventListener("click",function(e){
 document.addEventListener("DOMContentLoaded",function(){
   var tb=$("fxSelBtn"),cl=$("fxSelClr");if(!tb) return;
   /* ne vegye el a fókuszt / kijelölést a gombnyomás */
-  ["fxSelBtn","fxSelClr","effectsLine","randBtn2"].forEach(function(id){var el=$(id);if(el) el.addEventListener("mousedown",function(e){if(selMode&&e.target.closest("button")) e.preventDefault();});});
+  ["fxSelBtn","fxSelClr","effectsLineTxt","effectsLineHdr","randBtn2"].forEach(function(id){var el=$(id);if(el) el.addEventListener("mousedown",function(e){if(selMode&&e.target.closest("button")) e.preventDefault();});});
   tb.classList.toggle("on",selMode);
   tb.addEventListener("click",function(){selMode=!selMode;tb.classList.toggle("on",selMode);document.body.classList.toggle("fxsel-mode",selMode);try{localStorage.setItem("securics_fx_selmode",selMode?"1":"0");}catch(e){}applyHighlight();toast(selMode?"CSAK A KIJELÖLT: jelölj ki szöveget, majd válassz effektet":"Az effekt az egész jegyzetre hat");});
   cl.addEventListener("click",function(){var sel=getSel();if(!sel){toast("Előbb jelöld ki a szöveget!");return;}setFx(sel,"",null);toast("Effekt levéve");});
