@@ -2431,7 +2431,6 @@ function setAccent(hex){
   if(h){h.style.borderColor=hex;h.style.color=hex;h.style.boxShadow="0 0 15px "+hex;}
   if(t){var nm="Egyedi "+hex.toUpperCase(),os=document.querySelectorAll(".neon-opt");for(i=0;i<os.length;i++){if((os[i].dataset.value||"").toLowerCase()===hex.toLowerCase()){nm=os[i].dataset.name;break;}}t.textContent=nm;}
   lsSet("securics_final_color",hex);lsSet(PFX+"accent",hex);
-  if(!window.__calSyncing){try{if(typeof window.calSetAccent==="function") window.calSetAccent(hex);}catch(e){}}
 }
 window.setAccent=setAccent;
 window.securicsToggleEffect=function(cls,on){
@@ -3005,7 +3004,7 @@ if(document.readyState==="loading") document.addEventListener("DOMContentLoaded"
   <label>Szöveg <input type="color" id="cTx" value="#e6f0ff"></label>
   <span class="calSw" id="calThemes" title="Téma"></span>
   <span style="opacity:.6">|</span>
-  <span style="font-size:11px;opacity:.7">A felső effekt-csík keret-effektjei is érvényesek ↗</span><span class="calFx" id="calFx"></span>
+  <span style="font-size:11px;opacity:.7">A naptár effektjei függetlenek a jegyzet effektjeitől ↘</span><span class="calFx" id="calFx"></span>
   <span style="opacity:.6">|</span>
   <span class="calFx" id="calPre">
    <button id="pSave" title="Az aktuális színeket és effekteket elmenti">💾 Mentés</button>
@@ -3357,15 +3356,13 @@ var RING=['orbit','chase','chase2','rgb'],FXL=[['neon','💡 Neon'],['orbit','�
 var BM={neon:'neon',orbit:'orbit',scan:'scan',holo:'holo',aurora:'aurora',stars:'stars',chase:'chase',chase2:'chase2',rgbborder:'rgb',boxpulse:'pulse',edge:'edge',dashrun:'dash',bulbs:'bulbs',flash:'flash'};
 var RBM={};Object.keys(BM).forEach(function(bk){RBM[BM[bk]]=bk});
 /* két irányú szinkron a jegyzet effekt-sávjával: szín + effektek – mindkét irányba */
-window.calSetAccent=function(hex){if(!hex||ST.ca===hex)return;window.__calSyncing=true;ST.ca=hex;styApply();window.__calSyncing=false};
-function calPushAccent(){if(window.__calSyncing)return;window.__calSyncing=true;try{if(typeof window.setAccent==='function')window.setAccent(ST.ca)}catch(e){}window.__calSyncing=false}
-function calPushFx(k,on){if(window.__calSyncing||!RBM[k])return;window.__calSyncing=true;try{if(typeof window.securicsToggleEffect==='function')window.securicsToggleEffect('effect-'+RBM[k],on)}catch(e){}window.__calSyncing=false}
+/* a naptár és a jegyzet stílusa teljesen különálló: nincs szinkron */
+function calPushAccent(){}
+function calPushFx(k,on){}
 function styApply(){
   var o=$('calOv');o.style.setProperty('--ca',ST.ca);o.style.setProperty('--cbg',ST.bg);o.style.setProperty('--cpn',ST.pn);o.style.setProperty('--ctx',ST.tx);
   [].slice.call(o.classList).forEach(function(k){if(/^(fx|ring)-/.test(k))o.classList.remove(k)});
   var all=ST.fx.slice();
-  /* a felső effekt-csík (body.effect-*) effektjei a naptár keretére is érvényesek */
-  Object.keys(BM).forEach(function(bk){if(document.body.classList.contains('effect-'+bk)){var k=BM[bk];if(RING.indexOf(k)>-1)all=all.filter(function(x){return RING.indexOf(x)<0});if(all.indexOf(k)<0)all.push(k)}});
   all.forEach(function(k){o.classList.add((RING.indexOf(k)>-1?'ring-':'fx-')+k)});
   $('cKeret').value=ST.ca;$('cBg').value=ST.bg;$('cPn').value=ST.pn;$('cTx').value=ST.tx;
   [].forEach.call($('calFx').children,function(b){b.classList.toggle('on',ST.fx.indexOf(b.dataset.k)>-1)});
@@ -3392,10 +3389,9 @@ function styApply(){
   $('pLoad').onclick=function(){var v=$('pSel').value;if(v==='')return alert('Válassz egy mentett stílust');var p=pl()[+v];if(!p)return;var old=ST.fx.slice();ST=JSON.parse(JSON.stringify(p.st));styApply();calPushAccent();old.forEach(function(k){if(ST.fx.indexOf(k)<0)calPushFx(k,false)});ST.fx.forEach(function(k){calPushFx(k,true)})};
   $('pSel').onchange=function(){if(this.value!=='')$('pLoad').onclick()};
   $('pDel').onclick=function(){var v=$('pSel').value;if(v==='')return;var a=pl();if(!confirm('Törlöd: '+a[+v].n+'?'))return;a.splice(+v,1);ps(a);pfill()};
-  $('pReset').onclick=function(){var old=ST.fx.slice();ST=JSON.parse(JSON.stringify(DEF));styApply();calPushAccent();old.forEach(function(k){calPushFx(k,false)});try{if(window.__fxBaseReset)window.__fxBaseReset()}catch(e){}};
+  $('pReset').onclick=function(){var old=ST.fx.slice();ST=JSON.parse(JSON.stringify(DEF));styApply();calPushAccent();old.forEach(function(k){calPushFx(k,false)});};
   pfill();
   styApply();
-  try{new MutationObserver(function(){styApply()}).observe(document.body,{attributes:true,attributeFilter:['class']})}catch(e){}
 })();
 window.openCalendar=open_;
 function addBtn(){
